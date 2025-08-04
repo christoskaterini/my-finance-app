@@ -1,0 +1,2 @@
+keep in mind for all visible texts in the app frontend to be ready for translation in Laravel with {{ __('label') }} (in frontend the labels will be human readable)
+comment each section / block we create with a label for easy find in future

@@ -1,0 +1,549 @@
+{
+  "c:\\xampp\\htdocs\\my-finance-app\\app\\Http\\Controllers\\Auth\\ConfirmablePasswordController.php": {
+    "hash": "bda485943308b8e21e667e5f4a287946",
+    "labels": {
+      "auth.password": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\app\\Http\\Controllers\\ChartController.php": {
+    "hash": "d70bdbf7205b2b57be2424f47ab58487",
+    "labels": {
+      "Income": 2,
+      "Expenses": 2,
+      "Net Profit": 1,
+      "Total Expense": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\app\\Http\\Controllers\\SettingsController.php": {
+    "hash": "298bad444b33083a19329518e18295b3",
+    "labels": {
+      "Settings saved successfully.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\app\\Http\\Controllers\\TransactionController.php": {
+    "hash": "8e9ebab9e99e0cc7e71fda9bd0f52501",
+    "labels": {
+      "You must enter at least one valid amount to save.": 1,
+      ":count record(s) saved successfully!": 1,
+      "Transaction deleted successfully!": 1,
+      ":count transactions deleted successfully!": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\app\\Http\\Middleware\\CheckAdminRole.php": {
+    "hash": "d509d8ce4066905ba93c288de62c34a4",
+    "labels": {
+      "Unauthorized action.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\app\\Http\\Requests\\Auth\\LoginRequest.php": {
+    "hash": "d478d7717dea5587062888b3392ebea3",
+    "labels": {
+      "auth.failed": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\public\\setup\\index.php": {
+    "hash": "9d84bdb2b6ef351d948477241048c255",
+    "labels": {
+      "Welcome to My Finance": 1,
+      "This wizard will guide you through the installation process. Before you begin, please make sure you have created an empty database and have your database credentials ready.": 1,
+      "Start Setup": 1,
+      "Server Requirements": 1,
+      "Back": 2,
+      "Continue to Database Setup": 1,
+      "Database Configuration": 1,
+      "Please enter your database connection details below. These will be written to your <code>.env</code> file.": 1,
+      "App Name": 1,
+      "Database Host": 1,
+      "Database Port": 1,
+      "Database Name": 1,
+      "Database Username": 1,
+      "Database Password": 1,
+      "Save & Test Connection": 1,
+      "Run Installation": 2,
+      "Your <code>.env</code> file has been created. The next step will generate the application security key, create the database tables, and set up necessary links.": 1,
+      "Run database seeders? (Populates the database with initial/demo data)": 1,
+      "Next: Create Admin": 1,
+      "Create Administrator Account": 1,
+      "Full Name": 1,
+      "Email Address": 1,
+      "Password": 1,
+      "Create Admin & Finish": 1,
+      "Installation Complete!": 1,
+      "The setup wizard is now locked for security. You can now log in with the admin account you just created.": 1,
+      "Security Warning:": 1,
+      "For security reasons, please delete the <code>/public/setup</code> directory from your server.": 1,
+      "Go to Application": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\auth\\confirm-password.blade.php": {
+    "hash": "9de96a7c2485663cd169e101d1f6cbbf",
+    "labels": {
+      "This is a secure area of the application. Please confirm your password before continuing.": 1,
+      "Password": 1,
+      "Confirm": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\auth\\forgot-password.blade.php": {
+    "hash": "6792c8fcdcb7e50530ba73053ac876d4",
+    "labels": {
+      "Forgot Password": 1,
+      "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": 1,
+      "Email": 1,
+      "Email Password Reset Link": 1,
+      "Back to login": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\auth\\login.blade.php": {
+    "hash": "9d3671eb0e461ca5e473e4d7a626886c",
+    "labels": {
+      "Log in": 2,
+      "Email": 1,
+      "Password": 1,
+      "Remember me": 1,
+      "Forgot your password?": 1,
+      "Language": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\auth\\register.blade.php": {
+    "hash": "57e8bee25cc3016f5762ffeac740d744",
+    "labels": {
+      "Name": 1,
+      "Email": 1,
+      "Password": 1,
+      "Confirm Password": 1,
+      "Already registered?": 1,
+      "Register": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\auth\\reset-password.blade.php": {
+    "hash": "a13bc6ccc33d962c7a6c2d92cfda261b",
+    "labels": {
+      "Reset Password": 2,
+      "Email": 1,
+      "New Password": 1,
+      "Confirm Password": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\auth\\verify-email.blade.php": {
+    "hash": "4fbb838c84ffeb888b8216b2c8971592",
+    "labels": {
+      "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\\'t receive the email, we will gladly send you another.": 1,
+      "A new verification link has been sent to the email address you provided during registration.": 1,
+      "Resend Verification Email": 1,
+      "Log Out": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\categories\\index.blade.php": {
+    "hash": "9d4ed9bfb65902c37b9b1f501d57bdd2",
+    "labels": {
+      "Manage Categories": 1,
+      "Income": 2,
+      "Expenses": 1,
+      "New Category": 3,
+      "Save New Order": 1,
+      "Category Name": 1,
+      "Type": 1,
+      "Expense": 1,
+      "Close": 1,
+      "Save": 1,
+      "Edit Category": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\categories\\partials\\category-table.blade.php": {
+    "hash": "f17768c1bcec8f4397a43d92dc6ec4ff",
+    "labels": {
+      "Name": 1,
+      "Actions": 1,
+      "No categories found.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\dashboard.blade.php": {
+    "hash": "cf35a9e28c49dae1b69ea1d25faba19f",
+    "labels": {
+      "Dashboard": 1,
+      "Select a Store to Begin": 1,
+      "Please add a store to continue.": 1,
+      "Add Record": 1,
+      "Expenses": 1,
+      "Total Expenses": 1,
+      "Income": 1,
+      "Total Income": 1,
+      "Close": 1,
+      "Save Records": 1,
+      "for": 1,
+      "New Record for": 1,
+      "Shifts": 1,
+      "Sources": 1,
+      "Payment Methods": 1,
+      "Configuration Required": 1,
+      "Notes": 1,
+      "Amount": 2
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\layouts\\navigation.blade.php": {
+    "hash": "0b169d18532eff049caf400b2863a8e2",
+    "labels": {
+      "Dashboard": 2,
+      "Profile": 2,
+      "Log Out": 2
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\layouts\\studio.blade.php": {
+    "hash": "db8f560189ea147050dce086adec77bf",
+    "labels": {
+      "Date": 1,
+      "Store": 1,
+      "Type": 1,
+      "Amount": 1,
+      "Actions": 1,
+      "Dashboard": 1,
+      "Transactions": 1,
+      "Reports": 1,
+      "Overview": 1,
+      "Monthly Sums": 1,
+      "Category Analysis": 1,
+      "Day Income Analysis": 1,
+      "Charts": 1,
+      "Settings": 1,
+      "Stores": 1,
+      "Expense Categories": 1,
+      "Shifts": 1,
+      "Sources": 1,
+      "Payment Methods": 1,
+      "General": 1,
+      "Users": 1,
+      "Profile": 1,
+      "Sign out": 1,
+      "Close": 1,
+      "Confirm Action": 1,
+      "Are you sure?": 1,
+      "Cancel": 1,
+      "Delete": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\pagination\\custom.blade.php": {
+    "hash": "0bd8f4cc7c1e3ed26f9cea87d6503a4e",
+    "labels": {
+      "pagination.previous": 2,
+      "pagination.next": 2
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\profile\\edit.blade.php": {
+    "hash": "2fe77d768426c6b6c1fbb3b842bca719",
+    "labels": {
+      "Profile": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\profile\\partials\\delete-user-form.blade.php": {
+    "hash": "81080afd01996e76a329e8a35667c5a3",
+    "labels": {
+      "You cannot delete your account because you are the only administrator.": 1,
+      "Delete Account": 2,
+      " Your account will be deactivated, and you will no longer be able to log in. Your data will be preserved. Please enter your password to confirm.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\profile\\partials\\delete-user-modal.blade.php": {
+    "hash": "d9e9046dd1ee40ec89c560b42af147a3",
+    "labels": {
+      "Are you sure you want to delete your account?": 1,
+      "Your account will be deactivated, and you will no longer be able to log in. Your data will be preserved. Please enter your password to confirm.": 1,
+      "Password": 2,
+      "Cancel": 1,
+      "Deactivate Account": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\profile\\partials\\update-password-form.blade.php": {
+    "hash": "1129d181bf63fd8581b58fe4a5241438",
+    "labels": {
+      "Update Password": 1,
+      "Ensure your account is using a long, random password to stay secure.": 1,
+      "Current Password": 1,
+      "New Password": 1,
+      "Confirm Password": 1,
+      "Save": 1,
+      "Saved.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\profile\\partials\\update-profile-information-form.blade.php": {
+    "hash": "487bea9946f4b5e344e85196135aff56",
+    "labels": {
+      "Profile Information": 1,
+      "Update your account's profile information and email address.": 1,
+      "Name": 1,
+      "Email": 1,
+      "Your email address is unverified.": 1,
+      "Click here to re-send the verification email.": 1,
+      "A new verification link has been sent to your email address.": 1,
+      "Save": 1,
+      "Saved.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\reports\\charts\\index.blade.php": {
+    "hash": "76386fdbd78bb63a3cd1aef826ebc4d8",
+    "labels": {
+      "Overall Financial Performance": 1,
+      "All Years": 5,
+      "All Stores": 4,
+      "Income by Source": 1,
+      "Income by Shift": 1,
+      "Expenses by Category": 1,
+      "Store Performance Comparison": 1,
+      "Select Stores": 1,
+      "No data available for the selected filters.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\reports\\index.blade.php": {
+    "hash": "32e5ca5e1936b81dc5d6a6c28285c020",
+    "labels": {
+      "Reports": 1,
+      "All Stores - Total Sums": 1,
+      "All Years": 3,
+      "Total Income": 3,
+      "Total Expenses": 2,
+      "Net Profit": 4,
+      "All Time": 1,
+      "No store data available. Please add a store to see reports.": 1,
+      "Monthly Sums": 1,
+      "All Stores": 3,
+      "Month": 4,
+      "Income": 3,
+      "Expenses": 3,
+      "Total": 10,
+      "Total Expense": 1,
+      "Total Net": 1,
+      "Analysis for Income - Expenses": 1,
+      "All Sources": 2,
+      "All Payment Methods": 2,
+      "Grand Total": 2,
+      "Day Income Analysis": 1,
+      "Day": 2,
+      "No data available for the selected filters.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\settings\\index.blade.php": {
+    "hash": "a80eaf4c70c36d4314f3b8377b57a3ee",
+    "labels": {
+      "Application Settings": 1,
+      "Errors Found:": 1,
+      "Manage Stores": 1,
+      "Manage Expense Categories": 1,
+      "Manage Shifts": 1,
+      "Manage Sources": 1,
+      "Manage Payment Methods": 1,
+      "General Settings": 1,
+      "Close": 2,
+      "Save": 1,
+      "Manage Application Logo": 1,
+      "Upload New Logo": 1,
+      "Square PNG, max 2MB.": 1,
+      "Or, remove the current logo:": 1,
+      "Remove Current Logo": 1,
+      "Save New Logo": 1,
+      "New": 1,
+      "Edit": 1,
+      "Assign to Stores": 1,
+      "Order saved successfully!": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\settings\\partials\\general-tab.blade.php": {
+    "hash": "5316b8ca078d63965c2663a9e8281a56",
+    "labels": {
+      "General Settings": 1,
+      "Application Name": 1,
+      "Application Theme": 1,
+      "Light Mode": 1,
+      "Dark Mode": 1,
+      "Application Logo & Favicon": 1,
+      "Change Logo": 1,
+      "Upload Logo": 1,
+      "Regional Settings": 1,
+      "Language": 1,
+      "Timezone": 1,
+      "Currency Symbol": 1,
+      "Currency Position": 1,
+      "Before number (e.g., $100.00)": 1,
+      "After number (e.g., 100.00 €)": 1,
+      "Number Format": 1,
+      "Save General Settings": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\settings\\partials\\resource-tab.blade.php": {
+    "hash": "c45d7f9208eca29e61ad1a51889dd405",
+    "labels": {
+      "New": 1,
+      "Assigned Stores": 2,
+      "Actions": 2,
+      "None": 1,
+      "No items found.": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\settings\\users\\create.blade.php": {
+    "hash": "381c345f99f268ef2ca1d393b420b1f2",
+    "labels": {
+      "Add New User": 1,
+      "Create a New User": 1,
+      "Cancel": 1,
+      "Create User": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\settings\\users\\edit.blade.php": {
+    "hash": "6b75ab13f577ed7a326d10560bba1262",
+    "labels": {
+      "Edit User": 2,
+      "Cancel": 1,
+      "Update User": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\settings\\users\\index.blade.php": {
+    "hash": "e8fcca7df5909c3b5d4c7d823dfdf01b",
+    "labels": {
+      "User Management": 1,
+      "All Users": 1,
+      "Add New User": 1,
+      "Name": 1,
+      "Email": 1,
+      "Role": 1,
+      "Actions": 1,
+      "Edit": 1,
+      "Delete": 1,
+      "No users found.": 1,
+      "Confirm User Deletion": 1,
+      "To confirm, please enter your administrator password. This will deactivate the user account.": 1,
+      "Your Password": 2,
+      "Cancel": 1,
+      "Delete User": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\settings\\users\\_form.blade.php": {
+    "hash": "292d061cebeb52a4ed5a1a60bf9c4d4a",
+    "labels": {
+      "Name": 1,
+      "Email Address": 1,
+      "Role": 1,
+      "User": 1,
+      "Admin": 1,
+      "The role cannot be changed for the last administrator.": 1,
+      "Password": 1,
+      "Leave blank to keep current password.": 1,
+      "Confirm Password": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\setup\\index.blade.php": {
+    "hash": "a2cadc8bb786a58e600e2b895cd2c9cd",
+    "labels": {
+      "Application Setup": 1,
+      "Step 1: Server Requirements": 1,
+      "All requirements met. You can proceed.": 1,
+      "Next: Configure Database": 1,
+      "Please fix the server requirements before proceeding.": 1,
+      "Re-check": 1,
+      "Step 2: Database Configuration": 1,
+      "Database Host": 1,
+      "Database Port": 1,
+      "Database Name": 1,
+      "Database Username": 1,
+      "Database Password": 1,
+      "Test Connection & Save": 1,
+      "Step 3: Configure Email": 1,
+      "Enter your SMTP credentials. This will be used for password resets and notifications.": 1,
+      "SMTP Host": 1,
+      "SMTP Port": 1,
+      "Encryption": 1,
+      "SMTP Username": 1,
+      "SMTP Password": 1,
+      "From Email Address": 1,
+      "Save & Continue": 1,
+      "Step 4: Create Database Tables": 1,
+      "Configuration saved successfully!": 1,
+      "Click the button below to create all the necessary tables in your database. This will delete any existing tables.": 1,
+      "Create Tables": 1,
+      "Step 5: Install Sample Data (Optional)": 1,
+      "Database tables created successfully!": 1,
+      "Would you like to install some default sample data (stores, shifts, categories)? This is recommended for first-time users.": 1,
+      "No, Start with a Blank App": 1,
+      "Yes, Install Sample Data": 1,
+      "Step 6: Create Admin Account": 1,
+      "Your application is ready. Now, create the primary administrator account.": 1,
+      "Your Name": 1,
+      "Your Email": 1,
+      "Password": 1,
+      "Confirm Password": 1,
+      "Create Admin & Finish": 1,
+      "Setup Complete!": 1,
+      "Your application has been installed successfully.": 1,
+      "Go to Login Page": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\stores\\index.blade.php": {
+    "hash": "788c449c30d4a4fc1f94f69dd0b0c1f8",
+    "labels": {
+      "Manage Stores": 1,
+      "All Stores": 1,
+      "New Store": 2,
+      "Name": 1,
+      "Comments": 2,
+      "Actions": 1,
+      "No stores found.": 1,
+      "Save New Order": 1,
+      "Store Name": 1,
+      "Close": 1,
+      "Save": 1,
+      "Edit Store": 1,
+      "Order saved successfully!": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\transactions\\edit.blade.php": {
+    "hash": "bc1ef8db3e1f6641c3e51f5a9b4fafc2",
+    "labels": {
+      "Edit Transaction": 1,
+      "Edit Transaction Details": 1,
+      "Transaction Date": 1,
+      "Store": 1,
+      "Type": 1,
+      "Income": 1,
+      "Expense": 1,
+      "Amount": 1,
+      "Expense Category": 1,
+      "Notes": 1,
+      "Shift": 1,
+      "Source": 1,
+      "Payment Method": 1,
+      "Cancel": 1,
+      "Update Transaction": 1
+    }
+  },
+  "c:\\xampp\\htdocs\\my-finance-app\\resources\\views\\transactions\\index.blade.php": {
+    "hash": "46b690b6baec9b55aca16675689576b3",
+    "labels": {
+      "Transactions": 2,
+      "Total Income": 1,
+      "Total Expenses": 1,
+      "Net Total": 1,
+      "Date From": 1,
+      "Date To": 1,
+      "Year": 1,
+      "Month": 1,
+      "All Types": 1,
+      "Income": 1,
+      "Expense": 1,
+      "All Stores": 1,
+      "All": 1,
+      "Search...": 1,
+      "items selected": 1,
+      "Delete Selected": 1,
+      "Date": 2,
+      "User": 2,
+      "Store": 2,
+      "Type": 2,
+      "Details": 2,
+      "Amount": 2,
+      "Actions": 2,
+      "No transactions found.": 1,
+      "Confirm Deletion": 1,
+      "Close": 1,
+      "Are you sure you want to delete the selected transactions? This action cannot be undone.": 1,
+      "Cancel": 1,
+      "Delete": 1
+    }
+  }
+}
