@@ -67,10 +67,10 @@ class DatabaseSeeder extends Seeder
         });
         // Seed the users table.
         User::factory()->create([
-            'name' => 'Christos',
+            'name' => 'Admin',
             'email' => 'christoskanotidis@gmail.com',
             'role' => 'admin',
-            'password' => '2eV9dF6!jw5bY#8Mv6$Lz383#h',
+            'password' => 'password',
         ]);
     }
 }

@@ -105,7 +105,7 @@ $appName = $appNameMatches[1] ?? 'My Finance';
                     <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="run_seeder"><label class="form-check-label" for="run_seeder">Run database seeders? (Populates the database with initial/demo data)</label></div>
                     <button class="btn btn-primary w-100" id="run-install-btn" onclick="runInstallation()"><span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span> Run Installation</button>
                     <div id="console-output" class="mt-3">Click "Run Installation" to start...</div>
-                    <div class="d-flex justify-content-end mt-4"><button class="btn btn-primary" id="continue-to-admin" style="display:none;" onclick="showStep('admin')">{{ __('Next: Create Admin') }}</button></div>
+                    <div class="d-flex justify-content-end mt-4"><button class="btn btn-primary" id="continue-to-admin" style="display:none;" onclick="showStep('admin')">Next: Create Admin</button></div>
                 </div>
                 <div id="admin" class="step-container">
                     <h5 class="card-title text-center mb-4">Create Administrator Account</h5>

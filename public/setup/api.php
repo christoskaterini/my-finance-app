@@ -14,21 +14,25 @@ $lockFilePath = $basePath . '/storage/installed.lock';
 $envPath = $basePath . '/.env';
 
 // --- HELPER FUNCTIONS ---
-function send_json_response($data) {
+function send_json_response($data)
+{
     while (ob_get_level() > 0) ob_end_clean();
     echo json_encode($data);
     exit;
 }
 
-function send_error($message, $data = []) {
+function send_error($message, $data = [])
+{
     send_json_response(['success' => false, 'error' => true, 'message' => $message, 'data' => $data]);
 }
 
-function send_success($message, $data = []) {
+function send_success($message, $data = [])
+{
     send_json_response(['success' => true, 'error' => false, 'message' => $message, 'data' => $data]);
 }
 
-function bootstrap_laravel() {
+function bootstrap_laravel()
+{
     global $basePath;
     try {
         if (!file_exists($basePath . '/vendor/autoload.php')) return 'Composer dependencies not found.';
@@ -60,7 +64,6 @@ switch ($action) {
             if ($is_writable) @unlink($test_file);
             $checks[] = ['message' => "Directory is writable: <code>{$dir}</code>", 'success' => $is_writable];
         }
-        $checks[] = ['message' => 'PHP function <code>symlink</code> is available', 'success' => function_exists('symlink')];
         send_success('Requirements checked.', ['checks' => $checks]);
         break;
 
@@ -69,13 +72,17 @@ switch ($action) {
         if (!is_readable($envTemplatePath)) send_error('Could not read .env.example file.');
         $envTemplate = file_get_contents($envTemplatePath);
         $envTemplate = preg_replace('/^DB_CONNECTION=.*/m', 'DB_CONNECTION=mysql', $envTemplate);
-        $dbSettings = [ 'DB_HOST' => $_POST['db_host'] ?? '127.0.0.1', 'DB_PORT' => $_POST['db_port'] ?? '3306', 'DB_DATABASE' => $_POST['db_database'] ?? '', 'DB_USERNAME' => $_POST['db_username'] ?? '', 'DB_PASSWORD' => $_POST['db_password'] ?? '', ];
-        foreach ($dbSettings as $key => $value) { $envTemplate = preg_replace('/^#?\s*' . $key . '=.*/m', $key . '=' . $value, $envTemplate); }
+        $dbSettings = ['DB_HOST' => $_POST['db_host'] ?? '127.0.0.1', 'DB_PORT' => $_POST['db_port'] ?? '3306', 'DB_DATABASE' => $_POST['db_database'] ?? '', 'DB_USERNAME' => $_POST['db_username'] ?? '', 'DB_PASSWORD' => $_POST['db_password'] ?? '',];
+        foreach ($dbSettings as $key => $value) {
+            $envTemplate = preg_replace('/^#?\s*' . $key . '=.*/m', $key . '=' . $value, $envTemplate);
+        }
         $envTemplate = preg_replace('/^APP_NAME=.*/m', 'APP_NAME="' . ($_POST['app_name'] ?? 'My Finance') . '"', $envTemplate);
         try {
             $dsn = "mysql:host={$dbSettings['DB_HOST']};port={$dbSettings['DB_PORT']};dbname={$dbSettings['DB_DATABASE']}";
             new PDO($dsn, $dbSettings['DB_USERNAME'], $dbSettings['DB_PASSWORD'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-        } catch (\PDOException $e) { send_error('Database connection failed: ' . htmlspecialchars($e->getMessage())); }
+        } catch (\PDOException $e) {
+            send_error('Database connection failed: ' . htmlspecialchars($e->getMessage()));
+        }
         if (file_put_contents($envPath, $envTemplate) === false) send_error('Could not write to .env file.');
         send_success('.env file created and database connection successful.');
         break;
@@ -96,7 +103,7 @@ switch ($action) {
             $output .= "\nRunning Migrations...\n";
             \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
             $output .= \Illuminate\Support\Facades\Artisan::output();
-            
+
             // START: This is the final bug fix
             if (isset($_POST['seed']) && $_POST['seed'] === 'true') {
                 $output .= "\nRunning Seeders...\n";
@@ -110,10 +117,16 @@ switch ($action) {
             // END: This is the final bug fix
 
             $output .= "\nCreating storage link...\n";
-            $link = $basePath . '/public/storage'; $target = $basePath . '/storage/app/public';
-            if (file_exists($link)) { $output .= "Storage link already exists.\n"; } 
-            elseif (function_exists('symlink')) { symlink($target, $link); $output .= "Storage link created successfully.\n"; } 
-            else { $output .= "Warning: `symlink` function is disabled. Please create the storage link manually.\n"; }
+            $link = $basePath . '/public/storage';
+            $target = $basePath . '/storage/app/public';
+            if (file_exists($link)) {
+                $output .= "Storage link already exists.\n";
+            } elseif (function_exists('symlink')) {
+                symlink($target, $link);
+                $output .= "Storage link created successfully.\n";
+            } else {
+                $output .= "Warning: `symlink` function is disabled. Please create the storage link manually.\n";
+            }
         } catch (\Throwable $e) {
             $output .= "\n\nAN ARTISAN ERROR OCCURRED:\n" . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine();
             send_error("An error occurred during Artisan commands.", ['output' => nl2br(htmlspecialchars($output))]);
@@ -129,7 +142,9 @@ switch ($action) {
         try {
             $user = \App\Models\User::create(['name' => $_POST['name'], 'email' => $_POST['email'], 'password' => \Illuminate\Support\Facades\Hash::make($_POST['password']), 'role' => 'admin']);
             send_success('Admin user created successfully.', ['user_id' => $user->id]);
-        } catch (\Throwable $e) { send_error('Could not create admin user: ' . htmlspecialchars($e->getMessage())); }
+        } catch (\Throwable $e) {
+            send_error('Could not create admin user: ' . htmlspecialchars($e->getMessage()));
+        }
         break;
 
     case 'finalize':
