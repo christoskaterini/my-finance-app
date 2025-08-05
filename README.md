@@ -29,99 +29,120 @@ My Finance is a modern, self-hosted web application built with the Laravel frame
 
 ---
 
-## Installation Guide
+## Installation Guide (Live Server)
 
-This guide covers deploying the application to a live server. For local development, the steps are similar but you can use `php artisan serve`.
+This guide covers deploying the application to a live server.
 
 ### Step 1: Deploy the Code
 
 Log into your server via SSH.
 
 1.  **Navigate to your web root** (e.g., `/home/user/public_html`).
-2.  **Clone the repository.** This downloads the application code.
+2.  **Clone the repository.**
 
     ```bash
     git clone https://github.com/christoskaterini/my-finance-app.git .
     ```
 
-    _(Note: If the repository is private, you will be asked for your GitHub username and a Personal Access Token for the password.)_
-
-3.  **Install Production Dependencies.** This is a critical step that installs only the essential libraries required for the application to run.
+3.  **Install Production Dependencies.**
 
     ```bash
     composer install --no-dev --optimize-autoloader
     ```
 
-4.  **Set Server Permissions.** The web server needs permission to write to certain folders.
+4.  **Set Server Permissions.**
     ```bash
     chmod -R 775 storage bootstrap/cache
     ```
 
 ### Step 2: Configure the Web Server
 
-For security and proper functioning, your domain's "Document Root" must be set to the `/public` directory inside your project folder.
+For security, your domain's "Document Root" must be set to the `/public` directory inside your project folder.
 
 -   **Example:** If you installed in `/home/user/public_html`, the document root should be `/home/user/public_html/public`.
 
-This is a standard security practice for all Laravel applications.
-
 ### Step 3: Run the Web Installer
 
-1.  Open your web browser and navigate to `http://yourdomain.com/setup`.
-2.  Follow the on-screen wizard. It will:
-    -   Check server requirements.
-    -   Ask for your database credentials.
-    -   Create the `.env` environment file.
-    -   Run all necessary database migrations.
-    -   Create the storage link for file uploads.
-    -   Prompt you to create your main administrator account.
+1.  Open your web browser and navigate to your domain (`http://yourdomain.com`). The application will **automatically redirect you to the setup wizard**.
+2.  Follow the on-screen steps to configure the database and create your administrator account. This is the **recommended method** for creating your first user on a live server.
 
-### Step 4: Final Cleanup (Security)
+### Step 4: Handle File Uploads (Manual Storage Link)
 
-Once you have confirmed the application is running correctly, you **must delete the installer** for security reasons.
+The web installer will attempt to create a "storage link" for file uploads. If this fails due to server restrictions, your images may appear broken. You must create this link manually.
 
-1.  Log back into your server terminal.
-2.  Navigate to your project folder.
-3.  Run the following command:
+1.  Log into your server terminal.
+2.  Navigate to your project's **public** directory:
     ```bash
-    rm -rf public/setup
+    cd /path/to/your/project/public
     ```
+3.  Run the following Linux command to create the link:
+    `bash
+    ln -s ../storage/app/public storage
+    `
+    This command creates a shortcut named `storage` inside your `public` folder, pointing it to the real storage location.
 
-Your application is now fully installed, configured, and secured.
+### Step 5: Final Cleanup (Security)
+
+Once the application is running correctly, you **can delete the installer** for security reasons. (/public/setup)
+
+Your application is now fully installed and secured.
+
+---
+
+## Local Development Setup
+
+1.  **Clone the repository:** `git clone https://github.com/christoskaterini/my-finance-app.git`
+2.  **Navigate into the project:** `cd my-finance-app`
+3.  **Install all dependencies (including dev tools):** `composer install`
+4.  **Create your `.env` file:** `cp .env.example .env`
+5.  **Generate an application key:** `php artisan key:generate`
+6.  **Configure your `.env` file** with your local database details.
+7.  **Run migrations and seeders:** `php artisan migrate --seed`
+    -   This will build the database and create a default admin user.
+
+> **Warning:** The seeder creates a user with the email `christoskanotidis@gmail.com` and the password `password`. **Change this password immediately after your first login.**
 
 ---
 
 ## Updating the Application
 
-Updating your application after making changes locally is a simple and reliable process.
-
-1.  First, make your changes on your local machine, and then commit and push them to your GitHub repository's `main` branch.
+1.  First, commit and push your changes to your GitHub repository.
+2.  Next, log in to your server via SSH and run your "update cheat sheet" from the project's root directory:
 
     ```bash
-    # On your local machine
-    git commit -am "Add new feature or fix bug"
-    git push origin main
+    # Pull the latest code changes from GitHub
+    git pull origin main
+
+    # Install any new or updated packages
+    composer install --no-dev --optimize-autoloader
+
+    # Run any new database migrations
+    php artisan migrate --force
+
+    # Clear cached files to ensure your new code is used
+    php artisan optimize:clear
     ```
 
-2.  Next, log in to your server via SSH and run the following commands from your project's root directory. This is your "update cheat sheet":
+---
 
-        ```bash
-        # Navigate to your project directory on the server
-        cd /path/to/my-finance-app
+## Troubleshooting
 
-        # Pull the latest code changes from GitHub
-        git pull origin main
+### Error: `proc_open` is not available
 
-        # Install any new or updated packages
-        composer install --no-dev --optimize-autoloader
+If you see this error during `composer install` on a restrictive host, use these commands instead:
 
-        # Run any new database migrations
-        php artisan migrate --force
-
-        # Clear cached files to ensure your new code is used
-        php artisan optimize:clear
-        ```
-
-    Your application is now updated to the latest version.
+1.  Install packages without running scripts:
+    ```bash
+    composer install --no-dev --no-scripts --optimize-autoloader
+    ```
+2.  Then, manually run package discovery:
+    `bash
+    php artisan package:discover
+    `
+    Proceed with the installation as normal.
 
 ---
+
+## License
+
+This project is open-sourced software licensed under the [MIT license](LICENSE).
