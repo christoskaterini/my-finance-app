@@ -104,8 +104,6 @@ Your application is now fully installed and secured.
 
 > **Warning:** The seeder creates a user with the email `christoskanotidis@gmail.com` and the password `password`. **Change this password immediately after your first login.**
 
----
-
 ## Updating the Application
 
     ### Pull the latest code changes from GitHub
@@ -131,8 +129,6 @@ Your application is now fully installed and secured.
     ```bash
     php artisan optimize:clear
     ```
-
----
 
 ## Troubleshooting
 
