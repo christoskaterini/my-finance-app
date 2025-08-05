@@ -81,7 +81,7 @@ The web installer will attempt to create a "storage link" for file uploads. If t
     ```bash
     ln -s ../storage/app/public storage
     ```
-    `    This command creates a shortcut named`storage`inside your`public` folder, pointing it to the real storage location.
+    This command creates a shortcut named `storage` inside you `public` folder, pointing it to the real storage location.
 
 ### Step 5: Final Cleanup (Security)
 
@@ -108,28 +108,25 @@ Your application is now fully installed and secured.
 
 ## Updating the Application
 
-1.  First, commit and push your changes to your GitHub repository.
-2.  Next, log in to your server via SSH and run your "update cheat sheet" from the project's root directory:
-
-    # Pull the latest code changes from GitHub
+    ### Pull the latest code changes from GitHub
 
     ```bash
     git pull origin main
     ```
 
-    # Install any new or updated packages
+    ### Install any new or updated packages
 
     ```bash
     composer install --no-dev --optimize-autoloader
     ```
 
-    # Run any new database migrations
+    ### Run any new database migrations
 
     ```bash
     php artisan migrate --force
     ```
 
-    # Clear cached files to ensure your new code is used
+    ### Clear cached files to ensure your new code is used
 
     ```bash
     php artisan optimize:clear
