@@ -77,8 +77,8 @@ The web installer will attempt to create a "storage link" for file uploads. If t
     ```
 3.  Run the following Linux command to create the link:
     `bash
-    ln -s ../storage/app/public storage
-    `
+ln -s ../storage/app/public storage
+`
     This command creates a shortcut named `storage` inside your `public` folder, pointing it to the real storage location.
 
 ### Step 5: Final Cleanup (Security)
@@ -137,9 +137,15 @@ If you see this error during `composer install` on a restrictive host, use these
     ```
 2.  Then, manually run package discovery:
     `bash
-    php artisan package:discover
-    `
+php artisan package:discover
+`
     Proceed with the installation as normal.
+
+## Email settings
+
+### Set your email credentials in the .env file
+
+In next update will be in the Settings/General page
 
 ---
 
