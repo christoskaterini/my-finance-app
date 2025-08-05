@@ -2,16 +2,6 @@
 
 My Finance is a modern, self-hosted web application built with the Laravel framework to help you manage your personal finances, track expenses, and monitor your budget across different stores and payment methods.
 
-![My Finance Screenshot](public/01.png)
-![My Finance Screenshot](public/02.png)
-![My Finance Screenshot](public/03.png)
-![My Finance Screenshot](public/04.png)
-![My Finance Screenshot](public/05.png)
-![My Finance Screenshot](public/06.png)
-![My Finance Screenshot](public/07.png)
-![My Finance Screenshot](public/08.png)
-![My Finance Screenshot](public/09.png)
-
 ## Features
 
 -   **Transaction Management:** Log all your income and expenses with details.
@@ -20,6 +10,12 @@ My Finance is a modern, self-hosted web application built with the Laravel frame
 -   **Payment Methods:** Define and use various payment methods (Cash, Credit Card, etc.).
 -   **Dynamic Settings:** Customize currency, language, and timezone through a user-friendly settings panel.
 -   **Web-Based Installer:** A simple, guided setup wizard to get you up and running in minutes.
+
+![My Finance Screenshot](public/05.png)
+
+![My Finance Screenshot](public/06.png)
+
+![My Finance Screenshot](public/08.png)
 
 ---
 
@@ -129,7 +125,3 @@ Updating your application after making changes locally is a simple and reliable 
     Your application is now updated to the latest version.
 
 ---
-
-## License
-
-This project is open-sourced software licensed under the [MIT license](LICENSE).
