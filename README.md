@@ -106,25 +106,29 @@ Your application is now fully installed and secured.
 
 ## Updating the Application
 
-    ### Pull the latest code changes from GitHub
-    ```bash
-    git pull origin main
-    ```
+1. **Pull the latest code changes from GitHub**
 
-    ### Install any new or updated packages
-    ```bash
-    composer install --no-dev --optimize-autoloader
-    ```
+```bash
+git pull origin main
+```
 
-    ### Run any new database migrations
-    ```bash
-    php artisan migrate --force
-    ```
+2. **Install any new or updated packages**
 
-    ### Clear cached files to ensure your new code is used
-    ```bash
-    php artisan optimize:clear
-    ```
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+3. **Run any new database migrations**
+
+```bash
+php artisan migrate --force
+```
+
+4. **Clear cached files to ensure your new code is used**
+
+```bash
+php artisan optimize:clear
+```
 
 ## Troubleshooting
 
