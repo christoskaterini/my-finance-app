@@ -17,8 +17,6 @@ My Finance is a modern, self-hosted web application built with the Laravel frame
 
 ![My Finance Screenshot](public/08.png)
 
----
-
 ## Requirements
 
 -   PHP >= 8.1
@@ -26,8 +24,6 @@ My Finance is a modern, self-hosted web application built with the Laravel frame
 -   MySQL or MariaDB
 -   A web server like Apache or Nginx
 -   SSH / Terminal access for deployment is highly recommended.
-
----
 
 ## Installation Guide (Live Server)
 
@@ -152,12 +148,6 @@ If you see this error during `composer install` on a restrictive host, use these
 
 In next update will be in the Settings/General page
 
----
-
 ## License
 
 This project is open-sourced software licensed under the [MIT license](LICENSE).
-
-```
-
-```
