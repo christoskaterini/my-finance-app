@@ -60,9 +60,9 @@
     </div>
 
     {{-- Main Action Buttons --}}
-    <div class="mt-4 d-flex justify-content-end gap-5">
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-lg">{{ __('Cancel') }}</a>
-        <button type="submit" class="btn btn-primary btn-lg">{{ __('Save Records') }}</button>
+    <div class="mt-4 d-flex justify-content-end gap-4">
+        <a href="{{ route('dashboard') }}" class="btn btn-secondary btn-md">{{ __('Cancel') }}</a>
+        <button type="submit" class="btn btn-primary btn-md">{{ __('Save Records') }}</button>
     </div>
 </form>
 @endsection
