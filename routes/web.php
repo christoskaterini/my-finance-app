@@ -15,6 +15,7 @@ use App\Http\Controllers\ChartController;
 use App\Http\Controllers\Settings\UserController;
 use Illuminate\Support\Facades\Auth;
 
+
 // --- Publicly Accessible Login Route ---
 Route::middleware('web')->group(function () {
     Route::get('/', function () {
@@ -51,6 +52,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     // Transaction Routes
     Route::delete('transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('transactions', TransactionController::class);
+    Route::get('/create', [TransactionController::class, 'create'])->name('create');
 
     // Reports & Charts Group
     Route::prefix('reports')->name('reports.')->group(function () {

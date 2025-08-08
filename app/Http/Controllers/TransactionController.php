@@ -10,24 +10,20 @@ use App\Models\Shift;
 use App\Models\Source;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth; // Required for Auth::id()
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TransactionController extends Controller
 {
     use AuthorizesRequests;
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(Request $request)
     {
         $query = Transaction::with(['user', 'store', 'expenseCategory', 'shift', 'source', 'paymentMethod']);
 
-        // --- Apply Search ---
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
-                // Search common fields for all transaction types
                 $q->where('notes', 'like', "%{$searchTerm}%")
                     ->orWhereHas('user', function ($subQuery) use ($searchTerm) {
                         $subQuery->where('name', 'like', "%{$searchTerm}%");
@@ -36,7 +32,6 @@ class TransactionController extends Controller
                         $subQuery->where('name', 'like', "%{$searchTerm}%");
                     });
 
-                // Search expense-specific fields
                 $q->orWhere(function ($subQ) use ($searchTerm) {
                     $subQ->where('type', 'expense')
                         ->whereHas('expenseCategory', function ($catQuery) use ($searchTerm) {
@@ -44,19 +39,18 @@ class TransactionController extends Controller
                         });
                 });
 
-                // Search income-specific fields
                 $q->orWhere(function ($subQ) use ($searchTerm) {
                     $subQ->where('type', 'income')
                         ->where(function ($incomeQuery) use ($searchTerm) {
                             $incomeQuery->orWhereHas('shift', function ($shiftQuery) use ($searchTerm) {
                                 $shiftQuery->where('name', 'like', "%{$searchTerm}%");
                             })
-                            ->orWhereHas('source', function ($sourceQuery) use ($searchTerm) {
-                                $sourceQuery->where('name', 'like', "%{$searchTerm}%");
-                            })
-                            ->orWhereHas('paymentMethod', function ($pmQuery) use ($searchTerm) {
-                                $pmQuery->where('name', 'like', "%{$searchTerm}%");
-                            });
+                                ->orWhereHas('source', function ($sourceQuery) use ($searchTerm) {
+                                    $sourceQuery->where('name', 'like', "%{$searchTerm}%");
+                                })
+                                ->orWhereHas('paymentMethod', function ($pmQuery) use ($searchTerm) {
+                                    $pmQuery->where('name', 'like', "%{$searchTerm}%");
+                                });
                         });
                 });
             });
@@ -72,7 +66,6 @@ class TransactionController extends Controller
             $dateFrom = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth()->toDateString();
             $dateTo = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth()->toDateString();
         } elseif (!$dateFrom && !$dateTo) {
-            // Default to current month if no filters are set
             $dateFrom = now()->startOfMonth()->toDateString();
             $dateTo = now()->endOfMonth()->toDateString();
         }
@@ -97,7 +90,6 @@ class TransactionController extends Controller
 
         if ($perPage === 'all') {
             $total = (clone $query)->count();
-            // Paginate by the total number of records to show all on one page
             $transactions = $query->latest('transaction_date')->latest('created_at')->paginate($total > 0 ? $total : 1)->withQueryString();
         } else {
             $transactions = $query->latest('transaction_date')->latest('created_at')->paginate($perPage)->withQueryString();
@@ -108,11 +100,10 @@ class TransactionController extends Controller
 
         $stores = Store::orderBy('order_column')->get();
 
-        // Get distinct years for the filter dropdown
         $years = Transaction::selectRaw('YEAR(transaction_date) as year')
-                           ->distinct()
-                           ->orderBy('year', 'desc')
-                           ->pluck('year');
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
 
         return view('transactions.index', compact(
             'transactions',
@@ -129,9 +120,29 @@ class TransactionController extends Controller
         ));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function create(Request $request)
+    {
+        $selectedStoreId = $request->query('store_id');
+        $selectedStore = Store::find($selectedStoreId);
+
+        if (!$selectedStore) {
+            return redirect()->route('dashboard')->withErrors(['general' => __('Please select a valid store first.')]);
+        }
+
+        $expenseCategories = ExpenseCategory::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
+        $shifts = Shift::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
+        $sources = Source::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
+        $paymentMethods = PaymentMethod::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
+
+        return view('transactions.create', compact(
+            'selectedStore',
+            'expenseCategories',
+            'shifts',
+            'sources',
+            'paymentMethods'
+        ));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -140,7 +151,7 @@ class TransactionController extends Controller
             'expenses' => 'nullable|array',
             'expenses.*.expense_category_id' => 'required_with:expenses.*.amount|exists:expense_categories,id',
             'expenses.*.amount' => 'nullable|numeric|gt:0',
-            'expenses.*.notes' => 'nullable|string|max:255', // Add validation for notes
+            'expenses.*.notes' => 'nullable|string|max:255',
             'income' => 'nullable|array',
             'income.*.shift_id' => 'required_with:income.*.amount|exists:shifts,id',
             'income.*.source_id' => 'required_with:income.*.amount|exists:sources,id',
@@ -155,13 +166,13 @@ class TransactionController extends Controller
             foreach ($validated['expenses'] as $expense) {
                 if (!empty($expense['amount']) && !empty($expense['expense_category_id'])) {
                     Transaction::create([
-                        'user_id' => $user_id, 
-                        'store_id' => $validated['store_id'], 
-                        'transaction_date' => $validated['transaction_date'], 
-                        'type' => 'expense', 
-                        'expense_category_id' => $expense['expense_category_id'], 
-                        'amount' => $expense['amount'], 
-                        'notes' => $expense['notes'] ?? null // Save the notes
+                        'user_id' => $user_id,
+                        'store_id' => $validated['store_id'],
+                        'transaction_date' => $validated['transaction_date'],
+                        'type' => 'expense',
+                        'expense_category_id' => $expense['expense_category_id'],
+                        'amount' => $expense['amount'],
+                        'notes' => $expense['notes'] ?? null
                     ]);
                     $transactionCount++;
                 }
@@ -238,7 +249,6 @@ class TransactionController extends Controller
             'ids.*' => 'exists:transactions,id',
         ]);
 
-        // Authorize that the user can delete all of the given transactions
         $transactions = Transaction::whereIn('id', $request->ids)->get();
         foreach ($transactions as $transaction) {
             $this->authorize('delete', $transaction);
