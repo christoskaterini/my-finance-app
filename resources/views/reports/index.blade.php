@@ -424,37 +424,36 @@
             <h5 class="mb-0 me-3">{{ __('Day Income Analysis') }}</h5>
             <form method="GET" action="{{ route('reports.index') }}#day-income-analysis-section" id="dayIncomeAnalysisForm" class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
                 <input type="hidden" name="view" value="day_income_analysis">
-                <input type="hidden" name="cards_year" value="{{ $selectedYearCards }}">
-                <input type="hidden" name="year" value="{{ $selectedYearTable }}">
-                <input type="hidden" name="analysis_year" value="{{ $selectedYearAnalysis }}">
-                <input type="hidden" name="type" value="{{ $analysisType }}">
+                {{-- Other hidden fields are correct --}}
 
+                {{-- Year Selector - "All Years" option removed --}}
                 <select name="day_analysis_year" class="form-select form-select-md" onchange="this.form.submit()" style="width: auto;">
-                    <option value="all" {{ $dayAnalysisYear == 'all' ? 'selected' : '' }}>{{ __('All Years') }}</option>
                     @foreach ($years as $year)
                     <option value="{{ $year }}" {{ $dayAnalysisYear == $year ? 'selected' : '' }}>{{ $year }}</option>
                     @endforeach
                 </select>
 
+                {{-- NEW: Month Selector --}}
+                <select name="day_analysis_month" class="form-select form-select-md" onchange="this.form.submit()" style="width: auto;">
+                    @for ($m = 1; $m <= 12; $m++)
+                        <option value="{{ $m }}" {{ $dayAnalysisMonth == $m ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}
+                        </option>
+                        @endfor
+                </select>
+
+                {{-- Store, Source, and Payment Method selectors are correct --}}
                 <select name="day_analysis_store_id" class="form-select form-select-md" onchange="this.form.submit()" style="width: auto; min-width: 150px;">
                     <option value="all" {{ $dayAnalysisStoreId == 'all' ? 'selected' : '' }}>{{ __('All Stores') }}</option>
-                    @foreach ($stores as $store)
-                    <option value="{{ $store->id }}" {{ $dayAnalysisStoreId == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>
-                    @endforeach
+                    @foreach ($stores as $store)<option value="{{ $store->id }}" {{ $dayAnalysisStoreId == $store->id ? 'selected' : '' }}>{{ $store->name }}</option>@endforeach
                 </select>
-
                 <select name="day_analysis_source_id" class="form-select form-select-md" onchange="this.form.submit()" style="width: auto;">
                     <option value="all" {{ $dayAnalysisSourceId == 'all' ? 'selected' : '' }}>{{ __('All Sources') }}</option>
-                    @foreach ($sources as $source)
-                    <option value="{{ $source->id }}" {{ $dayAnalysisSourceId == $source->id ? 'selected' : '' }}>{{ $source->name }}</option>
-                    @endforeach
+                    @foreach ($sources as $source)<option value="{{ $source->id }}" {{ $dayAnalysisSourceId == $source->id ? 'selected' : '' }}>{{ $source->name }}</option>@endforeach
                 </select>
-
                 <select name="day_analysis_payment_method_id" class="form-select form-select-md" onchange="this.form.submit()" style="width: auto;">
                     <option value="all" {{ $dayAnalysisPaymentMethodId == 'all' ? 'selected' : '' }}>{{ __('All Payment Methods') }}</option>
-                    @foreach ($paymentMethods as $paymentMethod)
-                    <option value="{{ $paymentMethod->id }}" {{ $dayAnalysisPaymentMethodId == $paymentMethod->id ? 'selected' : '' }}>{{ $paymentMethod->name }}</option>
-                    @endforeach
+                    @foreach ($paymentMethods as $paymentMethod)<option value="{{ $paymentMethod->id }}" {{ $dayAnalysisPaymentMethodId == $paymentMethod->id ? 'selected' : '' }}>{{ $paymentMethod->name }}</option>@endforeach
                 </select>
             </form>
         </div>

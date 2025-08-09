@@ -187,6 +187,55 @@ class ReportController extends Controller
                 $dayIncomeData[$dateKey]['row_total'] += $transaction->amount;
             }
         }
+
+        // Month Income Analysis Data
+
+        $dayAnalysisYear = $request->input('day_analysis_year', date('Y'));
+        $dayAnalysisMonth = $request->input('day_analysis_month', date('m'));
+        $dayAnalysisStoreId = $request->input('day_analysis_store_id', 'all');
+        $dayAnalysisSourceId = $request->input('day_analysis_source_id', 'all');
+        $dayAnalysisPaymentMethodId = $request->input('day_analysis_payment_method_id', 'all');
+
+        $dayIncomeAnalysisQuery = Transaction::where('type', 'income')
+            ->whereYear('transaction_date', $dayAnalysisYear)
+            ->whereMonth('transaction_date', $dayAnalysisMonth);
+
+        $dayIncomeShifts = collect();
+
+        if ($dayAnalysisStoreId !== 'all') {
+            $store = Store::find($dayAnalysisStoreId);
+            if ($store) {
+                $dayIncomeShifts = $store->shifts()->get();
+            }
+            $dayIncomeAnalysisQuery->where('store_id', $dayAnalysisStoreId);
+        } else {
+            $dayIncomeShifts = Shift::all();
+        }
+        if ($dayAnalysisSourceId !== 'all') {
+            $dayIncomeAnalysisQuery->where('source_id', $dayAnalysisSourceId);
+        }
+        if ($dayAnalysisPaymentMethodId !== 'all') {
+            $dayIncomeAnalysisQuery->where('payment_method_id', $dayAnalysisPaymentMethodId);
+        }
+
+        $dayIncomeTransactions = $dayIncomeAnalysisQuery->get();
+
+        $dayIncomeData = [];
+        foreach ($dayIncomeTransactions as $transaction) {
+            $carbonDate = Carbon::parse($transaction->transaction_date);
+            $dateKey = $carbonDate->format('Y-m-d');
+            $displayDate = $carbonDate->translatedFormat('d/m/Y l');
+            if (!isset($dayIncomeData[$dateKey])) {
+                $dayIncomeData[$dateKey] = ['date' => $displayDate, 'row_total' => 0];
+                foreach ($dayIncomeShifts as $shift) {
+                    $dayIncomeData[$dateKey][$shift->id] = 0;
+                }
+            }
+            if (isset($dayIncomeData[$dateKey][$transaction->shift_id])) {
+                $dayIncomeData[$dateKey][$transaction->shift_id] += $transaction->amount;
+                $dayIncomeData[$dateKey]['row_total'] += $transaction->amount;
+            }
+        }
         ksort($dayIncomeData);
 
         return view('reports.index', compact(
@@ -205,7 +254,6 @@ class ReportController extends Controller
             'totalMonthlyIncome',
             'totalMonthlyExpense',
             'totalMonthlyNet',
-            // Analysis Data
             'analysisType',
             'selectedSourceId',
             'selectedPaymentMethodId',
@@ -215,7 +263,6 @@ class ReportController extends Controller
             'analysisColumns',
             'analysisColumnTotals',
             'analysisData',
-            // Day Income Analysis
             'dayAnalysisYear',
             'dayAnalysisStoreId',
             'dayAnalysisSourceId',
