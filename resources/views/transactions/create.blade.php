@@ -28,9 +28,9 @@
         <div class="col-lg-6">
             <div class="record-section expense" id="expense-section">
                 <div class="record-section-header">
-                    <h6 class="mb-0 d-flex align-items-center">
+                    <h4 class="mb-0 d-flex align-items-center">
                         <div class="d-inline-block rounded-circle bg-danger me-2" style="width: 10px; height: 10px;"></div>{{__('Expenses')}}
-                    </h6>
+                    </h4>
                 </div>
                 <div id="expense-lines-container" class="py-2"></div>
                 <div class="record-section-footer d-flex justify-content-between align-items-center">
@@ -47,9 +47,9 @@
         <div class="col-lg-6">
             <div class="record-section income" id="income-section">
                 <div class="record-section-header">
-                    <h6 class="mb-0 d-flex align-items-center">
+                    <h4 class="mb-0 d-flex align-items-center">
                         <div class="d-inline-block rounded-circle bg-success me-2" style="width: 10px; height: 10px;"></div>{{__('Income')}}
-                    </h6>
+                    </h4>
                 </div>
                 <div id="income-lines-container" class="py-2"></div>
                 <div class="record-section-footer d-flex justify-content-between align-items-center">
@@ -149,9 +149,19 @@
             let options = expenseCategories.map((c, i) => `<option value="${c.id}" ${i===0 ? 'selected':''}>${c.name}</option>`).join('');
             const line = document.createElement('div');
             line.className = 'row g-3 align-items-center record-line-separator flex-column flex-sm-row mb-3';
-            line.innerHTML = `<div class="col-sm-6"><select class="form-select form-select-lg" name="expenses[${index}][expense_category_id]">${options}</select></div><div class="col-sm-6"><input type="number" inputmode="decimal" step="0.01" class="form-control form-control-lg amount-input" name="expenses[${index}][amount]" placeholder="{{__('Amount')}}"></div>`;
-            expenseContainer.appendChild(line);
+            line.innerHTML = `
+            <div class="col-sm-4">
+                <select class="form-select form-select-lg" name="expenses[${index}][expense_category_id]">${options}</select>
+            </div>
+            <div class="col-sm-4">
+                <input type="text" class="form-control form-control-lg" name="expenses[${index}][notes]" placeholder="{{__('Notes')}}">
+            </div>
+            <div class="col-sm-4">
+                <input type="number" inputmode="decimal" step="0.01" class="form-control form-control-lg amount-input" name="expenses[${index}][amount]" placeholder="{{__('Amount')}}">
+            </div>
+            `;
 
+            expenseContainer.appendChild(line);
             if (focus && !isTouchDevice()) {
                 line.querySelector('.amount-input').focus();
             }
