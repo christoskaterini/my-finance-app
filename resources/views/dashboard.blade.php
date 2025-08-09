@@ -2,17 +2,6 @@
 @section('page-title', __('Dashboard'))
 
 @section('content')
-{{-- Toast container for success messages --}}
-@if(session('success'))
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
-    <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body">{{ session('success') }}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    </div>
-</div>
-@endif
-
 <div class="row">
     <div class="col-xl-9 col-lg-10">
         <div class="card">

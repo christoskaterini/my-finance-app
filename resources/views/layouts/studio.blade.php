@@ -308,6 +308,17 @@
 </head>
 
 <body>
+    {{-- Toast Notification for Success Messages --}}
+    <div class="toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1100">
+        @if(session('success'))
+        <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">{{ session('success') }}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        @endif
+    </div>
 
     <aside class="sidebar">
         <div>
@@ -431,20 +442,6 @@
             @yield('content')
         </main>
     </div>
-
-    {{-- Toast Notification for Success Messages --}}
-    @if (session('success'))
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ session('success') }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="{{ __('Close') }}"></button>
-            </div>
-        </div>
-    </div>
-    @endif
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
