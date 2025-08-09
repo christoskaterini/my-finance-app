@@ -154,7 +154,7 @@
                 <select class="form-select form-select-lg" name="expenses[${index}][expense_category_id]">${options}</select>
             </div>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-control-lg" name="expenses[${index}][notes]" placeholder="{{__('Notes')}}">
+                <input type="text" class="form-control form-control-lg notes-input" name="expenses[${index}][notes]" placeholder="{{__('Notes')}}">
             </div>
             <div class="col-sm-4">
                 <input type="number" inputmode="decimal" step="0.01" class="form-control form-control-lg amount-input" name="expenses[${index}][amount]" placeholder="{{__('Amount')}}">
@@ -203,10 +203,10 @@
             if (e.key === 'Enter') {
                 const target = e.target;
 
-                if (target.classList.contains('amount-input')) {
+                if (target.classList.contains('amount-input') || target.classList.contains('notes-input')) {
                     e.preventDefault();
 
-                    const allInputs = Array.from(addRecordForm.querySelectorAll('.amount-input'));
+                    const allInputs = Array.from(addRecordForm.querySelectorAll('.amount-input, .notes-input'));
                     const currentIndex = allInputs.indexOf(target);
                     const nextInput = allInputs[currentIndex + 1];
 
