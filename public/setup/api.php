@@ -1,6 +1,5 @@
 <?php
-
-// Checks if Faker class exists before attempting to seed.
+// API backend for the interactive setup wizard.
 
 // --- CONFIGURATION & BOOTSTRAP ---
 @ini_set('display_errors', 0);
@@ -64,24 +63,60 @@ switch ($action) {
         send_success('Requirements checked.', ['checks' => $checks]);
         break;
 
+    case 'test_db':
+        try {
+            $dsn = "mysql:host={$_POST['db_host']};port={$_POST['db_port']};dbname={$_POST['db_database']}";
+            new PDO($dsn, $_POST['db_username'], $_POST['db_password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        } catch (\PDOException $e) {
+            send_error('Database connection failed: ' . htmlspecialchars($e->getMessage()));
+        }
+
+        send_success('Database connection successful!');
+        break;
+
     case 'save_env':
         $envTemplatePath = $basePath . '/.env.example';
         if (!is_readable($envTemplatePath)) send_error('Could not read .env.example file.');
         $envTemplate = file_get_contents($envTemplatePath);
-        $envTemplate = preg_replace('/^DB_CONNECTION=.*/m', 'DB_CONNECTION=mysql', $envTemplate);
-        $dbSettings = ['DB_HOST' => $_POST['db_host'] ?? '127.0.0.1', 'DB_PORT' => $_POST['db_port'] ?? '3306', 'DB_DATABASE' => $_POST['db_database'] ?? '', 'DB_USERNAME' => $_POST['db_username'] ?? '', 'DB_PASSWORD' => $_POST['db_password'] ?? '',];
-        foreach ($dbSettings as $key => $value) {
-            $envTemplate = preg_replace('/^#?\s*' . $key . '=.*/m', $key . '=' . $value, $envTemplate);
-        }
-        $envTemplate = preg_replace('/^APP_NAME=.*/m', 'APP_NAME="' . ($_POST['app_name'] ?? 'My Finance') . '"', $envTemplate);
+
+        // Test DB connection
         try {
-            $dsn = "mysql:host={$dbSettings['DB_HOST']};port={$dbSettings['DB_PORT']};dbname={$dbSettings['DB_DATABASE']}";
-            new PDO($dsn, $dbSettings['DB_USERNAME'], $dbSettings['DB_PASSWORD'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+            $dsn = "mysql:host={$_POST['db_host']};port={$_POST['db_port']};dbname={$_POST['db_database']}";
+            new PDO($dsn, $_POST['db_username'], $_POST['db_password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
         } catch (\PDOException $e) {
             send_error('Database connection failed: ' . htmlspecialchars($e->getMessage()));
         }
+
+        $replacements = [
+            'APP_NAME' => '"' . ($_POST['app_name'] ?? 'My Finance') . '"',
+            'APP_ENV' => $_POST['app_env'] ?? 'production',
+            'APP_DEBUG' => ($_POST['app_debug'] === 'true') ? 'true' : 'false',
+            'APP_URL' => $_POST['app_url'] ?? 'http://localhost',
+
+            'DB_CONNECTION' => 'mysql',
+            'DB_HOST' => $_POST['db_host'] ?? '127.0.0.1',
+            'DB_PORT' => $_POST['db_port'] ?? '3306',
+            'DB_DATABASE' => $_POST['db_database'] ?? '',
+            'DB_USERNAME' => $_POST['db_username'] ?? '',
+            'DB_PASSWORD' => $_POST['db_password'] ?? '',
+
+            'MAIL_MAILER' => $_POST['mail_mailer'] ?? 'smtp',
+            'MAIL_HOST' => $_POST['mail_host'] ?? '127.0.0.1',
+            'MAIL_PORT' => $_POST['mail_port'] ?? '1025',
+            'MAIL_USERNAME' => $_POST['mail_username'] ?? '',
+            'MAIL_PASSWORD' => $_POST['mail_password'] ?? '',
+            'MAIL_ENCRYPTION' => $_POST['mail_encryption'] ?? 'tls',
+            'MAIL_FROM_ADDRESS' => '"' . ($_POST['mail_from_address'] ?? 'hello@example.com') . '"',
+            'MAIL_FROM_NAME' => '"' . ($_POST['mail_from_name'] ?? '${APP_NAME}') . '"',
+        ];
+
+        foreach ($replacements as $key => $value) {
+            $envTemplate = preg_replace('/^#?\s*' . $key . '=.*/m', $key . '=' . $value, $envTemplate);
+        }
+
         if (file_put_contents($envPath, $envTemplate) === false) send_error('Could not write to .env file.');
-        send_success('.env file created and database connection successful.');
+
+        send_success('.env file created successfully. Proceeding to installation...');
         break;
 
     case 'run_install':
