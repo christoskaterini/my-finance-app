@@ -33,6 +33,7 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .sidebar .nav-link {
@@ -323,13 +324,13 @@
                         <i class="bi bi-grid-1x2-fill me-2"></i> <span>{{__('Dashboard')}}</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item mt-2">
                     <a class="nav-link {{ request()->routeIs('transactions.index') ? 'active' : '' }}" href="{{ route('transactions.index') }}">
                         <i class="bi bi-wallet2 me-2"></i> <span>{{__('Transactions')}}</span>
                     </a>
                 </li>
                 {{-- New Reports Accordion Menu --}}
-                <li class="nav-item">
+                <li class="nav-item mt-2">
                     <a class="nav-link d-flex justify-content-between {{ request()->routeIs('reports.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#reports-submenu" role="button" aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
                         <span><i class="bi bi-pie-chart-fill me-2"></i> <span>{{__('Reports')}}</span></span>
                         <i class="bi bi-chevron-right toggle-icon"></i>

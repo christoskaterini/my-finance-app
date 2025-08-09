@@ -23,6 +23,7 @@ class SetLocale
 
         if ($locale) {
             App::setLocale($locale);
+            \Carbon\Carbon::setLocale($locale);
             Session::put('locale', $locale);
         }
 
