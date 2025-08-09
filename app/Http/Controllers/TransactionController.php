@@ -56,23 +56,27 @@ class TransactionController extends Controller
             });
         }
 
-        // --- Apply Filters ---
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
         $selectedYear = $request->input('year');
         $selectedMonth = $request->input('month');
+        $hasDateFilter = false;
 
-        if ($selectedYear && $selectedMonth) {
-            $dateFrom = Carbon::create($selectedYear, $selectedMonth, 1)->startOfMonth()->toDateString();
-            $dateTo = Carbon::create($selectedYear, $selectedMonth, 1)->endOfMonth()->toDateString();
-        } elseif (!$dateFrom && !$dateTo) {
+        if ($selectedMonth) {
+            $yearToUse = $selectedYear ?: date('Y');
+            $dateFrom = Carbon::create($yearToUse, $selectedMonth, 1)->startOfMonth()->toDateString();
+            $dateTo = Carbon::create($yearToUse, $selectedMonth, 1)->endOfMonth()->toDateString();
+            $hasDateFilter = true;
+        } elseif ($dateFrom && $dateTo) {
+            $hasDateFilter = true;
+        }
+
+        if (!$hasDateFilter) {
             $dateFrom = now()->startOfMonth()->toDateString();
             $dateTo = now()->endOfMonth()->toDateString();
         }
 
-        if ($dateFrom && $dateTo) {
-            $query->whereBetween('transaction_date', [$dateFrom, $dateTo]);
-        }
+        $query->whereBetween('transaction_date', [$dateFrom, $dateTo]);
 
         if ($request->filled('store_id')) {
             $query->where('store_id', $request->store_id);
@@ -97,13 +101,8 @@ class TransactionController extends Controller
 
         $netTotal = $totalIncome - $totalExpenses;
         $transactionCount = $transactions->total();
-
         $stores = Store::orderBy('order_column')->get();
-
-        $years = Transaction::selectRaw('YEAR(transaction_date) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
+        $years = Transaction::selectRaw('YEAR(transaction_date) as year')->distinct()->orderBy('year', 'desc')->pluck('year');
 
         return view('transactions.index', compact(
             'transactions',
