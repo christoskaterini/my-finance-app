@@ -1,8 +1,5 @@
 <?php
 
-// START
-
-// API backend for the interactive setup wizard. (v8 - Final with Seeder Safety Check)
 // Checks if Faker class exists before attempting to seed.
 
 // --- CONFIGURATION & BOOTSTRAP ---
@@ -104,7 +101,6 @@ switch ($action) {
             \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
             $output .= \Illuminate\Support\Facades\Artisan::output();
 
-            // START: This is the final bug fix
             if (isset($_POST['seed']) && $_POST['seed'] === 'true') {
                 $output .= "\nRunning Seeders...\n";
                 if (class_exists(\Faker\Factory::class)) {
@@ -114,7 +110,6 @@ switch ($action) {
                     $output .= "Skipped. The Faker library was not found.\nTo run seeders, please install with dev dependencies (`composer install`).\n";
                 }
             }
-            // END: This is the final bug fix
 
             $output .= "\nCreating storage link...\n";
             $link = $basePath . '/public/storage';
@@ -159,4 +154,3 @@ switch ($action) {
         send_error('Invalid action specified.');
         break;
 }
-// END
