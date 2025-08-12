@@ -169,20 +169,20 @@
                         <tr>
                             <td><input class="form-check-input row-checkbox" type="checkbox" name="ids[]" value="{{ $transaction->id }}"></td>
                             <td data-label="{{__('Date')}}">{{ $transaction->transaction_date }}</td>
-                            <td data-label="{{__('User')}}">{{ $transaction->user->name }}</td>
-                            <td data-label="{{__('Store')}}">{{ $transaction->store->name }}</td>
+                            <td data-label="{{__('User')}}">{{ $transaction->user->name ?? __('(Deleted User)') }}</td>
+                            <td data-label="{{__('Store')}}">{{ $transaction->store->name ?? __('(Deleted Store)') }}</td>
                             <td data-label="{{__('Type')}}">
-                                <span class="badge bg-{{ $transaction->type == 'income' ? 'success' : 'danger' }}">
-                                    {{ __(ucfirst($transaction->type)) }}
-                                </span>
+                                <span class="badge bg-{{ $transaction->type == 'income' ? 'success' : 'danger' }}">{{ __(ucfirst($transaction->type)) }}</span>
                             </td>
                             <td data-label="{{__('Details')}}">
                                 @if($transaction->type == 'income')
-                                {{ $transaction->shift->name }} / {{ $transaction->source->name }} / {{ $transaction->paymentMethod->name ?? '' }}
+                                {{ $transaction->shift->name ?? __('(deleted)') }} /
+                                {{ $transaction->source->name ?? __('(deleted)') }} /
+                                {{ $transaction->paymentMethod->name ?? __('(deleted)') }}
                                 @else
-                                {{ $transaction->expenseCategory->name }}
+                                {{ $transaction->expenseCategory->name ?? __('(Uncategorized)') }}
                                 @if($transaction->notes)
-                                / {{ $transaction->notes }}
+                                / <span class="text-muted">{{ $transaction->notes }}</span>
                                 @endif
                                 @endif
                             </td>
