@@ -128,10 +128,21 @@ class TransactionController extends Controller
             return redirect()->route('dashboard')->withErrors(['general' => __('Please select a valid store first.')]);
         }
 
-        $expenseCategories = ExpenseCategory::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
-        $shifts = Shift::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
-        $sources = Source::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
-        $paymentMethods = PaymentMethod::whereHas('stores', fn($q) => $q->where('store_id', $selectedStoreId))->orderBy('order_column')->get();
+        $expenseCategories = ExpenseCategory::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
+
+        $shifts = Shift::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
+
+        $sources = Source::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
+
+        $paymentMethods = PaymentMethod::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
 
         return view('transactions.create', compact(
             'selectedStore',
