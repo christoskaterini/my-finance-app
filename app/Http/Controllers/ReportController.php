@@ -33,6 +33,48 @@ class ReportController extends Controller
 
     public function index(Request $request)
     {
+        $filterKeys = [
+            'view', 'store_id', 'cards_year', 'year', 'type', 'analysis_year', 
+            'source_id', 'payment_method_id', 'day_analysis_year', 
+            'day_analysis_month', 'day_analysis_store_id', 
+            'day_analysis_source_id', 'day_analysis_payment_method_id'
+        ];
+        $sessionPrefix = 'reports_';
+
+        // Handle Reset
+        if ($request->has('reset')) {
+            foreach ($filterKeys as $key) {
+                session()->forget($sessionPrefix . $key);
+            }
+            return redirect()->route('reports.index');
+        }
+
+        // --- Sticky Filters Logic ---
+        $finalFilters = [];
+        $needRedirect = false;
+
+        foreach ($filterKeys as $key) {
+            if ($request->has($key)) {
+                // Parameter is in request: update session
+                $val = $request->input($key);
+                if (!is_null($val) && $val !== '') {
+                    session([$sessionPrefix . $key => $val]);
+                    $finalFilters[$key] = $val;
+                } else {
+                    session()->forget($sessionPrefix . $key);
+                }
+            } elseif (session()->has($sessionPrefix . $key)) {
+                // Parameter is missing from request but exists in session: restore it
+                $finalFilters[$key] = session($sessionPrefix . $key);
+                $needRedirect = true;
+            }
+        }
+
+        // If we restored any filters from session, redirect to the full URL
+        if ($needRedirect) {
+            return redirect()->route('reports.index', $finalFilters);
+        }
+    
         // Centralize filter parameters
         $currentView = $request->input('view', 'home');
         $selectedStoreId = $request->input('store_id', 'all');

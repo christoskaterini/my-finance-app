@@ -158,6 +158,7 @@
                 </select>
                 <input type="hidden" name="year" value="{{ $selectedYearTable }}">
                 <input type="hidden" name="store_id" value="{{ $selectedStoreId ?? 'all' }}">
+                <a href="{{ route('reports.index', ['reset' => 1]) }}" class="btn btn-secondary btn-sm d-inline-flex align-items-center justify-content-center" title="{{ __('Reset Filters') }}"><i class="bi bi-arrow-clockwise"></i></a>
             </form>
         </div>
         <div class="card-body">
@@ -294,6 +295,7 @@
                     @endforeach
                 </select>
                 <input type="hidden" name="cards_year" value="{{ $selectedYearCards }}">
+                <a href="{{ route('reports.index', ['reset' => 1]) }}" class="btn btn-secondary btn-sm d-inline-flex align-items-center justify-content-center" title="{{ __('Reset Filters') }}"><i class="bi bi-arrow-clockwise"></i></a>
             </form>
         </div>
         <div class="table-responsive">
@@ -377,6 +379,7 @@
                     @endforeach
                 </select>
                 @endif
+                <a href="{{ route('reports.index', ['reset' => 1]) }}" class="btn btn-secondary btn-sm d-inline-flex align-items-center justify-content-center" title="{{ __('Reset Filters') }}"><i class="bi bi-arrow-clockwise"></i></a>
             </form>
         </div>
         <div class="table-responsive">
@@ -455,6 +458,7 @@
                     <option value="all" {{ $dayAnalysisPaymentMethodId == 'all' ? 'selected' : '' }}>{{ __('All Payment Methods') }}</option>
                     @foreach ($paymentMethods as $paymentMethod)<option value="{{ $paymentMethod->id }}" {{ $dayAnalysisPaymentMethodId == $paymentMethod->id ? 'selected' : '' }}>{{ $paymentMethod->name }}</option>@endforeach
                 </select>
+                <a href="{{ route('reports.index', ['reset' => 1]) }}" class="btn btn-secondary btn-sm d-inline-flex align-items-center justify-content-center" title="{{ __('Reset Filters') }}"><i class="bi bi-arrow-clockwise"></i></a>
             </form>
         </div>
         <div class="table-responsive">
@@ -505,3 +509,25 @@
 </div>
 @endif
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function highlightActiveFilters() {
+            const filterInputs = document.querySelectorAll('.card-header form .form-control, .card-header form .form-select');
+            filterInputs.forEach(input => {
+                const isDefaultYear = (input.name.includes('year') || input.name === 'year') && input.value === "{{ date('Y') }}";
+                const isDefaultMonth = input.name === 'day_analysis_month' && input.value === "{{ date('m') }}";
+                const isView = input.name === 'view';
+
+                if (input.value && input.value !== '' && input.value !== 'all' && !isDefaultYear && !isDefaultMonth && !isView) {
+                    input.classList.add('filter-active');
+                } else {
+                    input.classList.remove('filter-active');
+                }
+            });
+        }
+        highlightActiveFilters();
+    });
+</script>
+@endpush

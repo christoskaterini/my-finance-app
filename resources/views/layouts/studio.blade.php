@@ -140,7 +140,7 @@
 
         .transactions-table th.col-date,
         .transactions-table td[data-label="{{__('Date')}}"] {
-            width: 120px;
+            width: 145px;
         }
 
         .transactions-table th.col-store,
@@ -303,6 +303,19 @@
             --bs-table-bg: #343a40;
             --bs-table-border-color: #495057;
             --bs-table-color: #dee2e6;
+        }
+    </style>
+    @stack('styles')
+
+    <style>
+        .filter-active {
+            border-color: #0dcafd !important;
+            border-width: 2px !important;
+            box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25) !important;
+        }
+
+        [data-bs-theme="dark"] .filter-active {
+            border-color: #0dcafd !important;
         }
     </style>
 </head>

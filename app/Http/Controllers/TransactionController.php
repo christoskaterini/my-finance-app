@@ -19,6 +19,43 @@ class TransactionController extends Controller
 
     public function index(Request $request)
     {
+        $filterKeys = ['search', 'date_from', 'date_to', 'year', 'month', 'store_id', 'type', 'per_page'];
+        $sessionPrefix = 'trans_';
+
+        // Handle Reset
+        if ($request->has('reset')) {
+            foreach ($filterKeys as $key) {
+                session()->forget($sessionPrefix . $key);
+            }
+            return redirect()->route('transactions.index');
+        }
+
+        // --- Sticky Filters Logic ---
+        $finalFilters = [];
+        $needRedirect = false;
+
+        foreach ($filterKeys as $key) {
+            if ($request->has($key)) {
+                // Parameter is in request: update session
+                $val = $request->input($key);
+                if (!is_null($val) && $val !== '') {
+                    session([$sessionPrefix . $key => $val]);
+                    $finalFilters[$key] = $val;
+                } else {
+                    session()->forget($sessionPrefix . $key);
+                }
+            } elseif (session()->has($sessionPrefix . $key)) {
+                // Parameter is missing from request but exists in session: restore it
+                $finalFilters[$key] = session($sessionPrefix . $key);
+                $needRedirect = true;
+            }
+        }
+
+        // If we restored any filters from session, redirect to the full URL
+        if ($needRedirect) {
+            return redirect()->route('transactions.index', $finalFilters);
+        }
+
         $query = Transaction::with(['user', 'store', 'expenseCategory', 'shift', 'source', 'paymentMethod']);
 
         if ($request->filled('search')) {
@@ -104,6 +141,12 @@ class TransactionController extends Controller
         $stores = Store::orderBy('order_column')->get();
         $years = Transaction::selectRaw('YEAR(transaction_date) as year')->distinct()->orderBy('year', 'desc')->pluck('year');
 
+        // Reference data for Spreadsheet Mode
+        $expenseCategories = ExpenseCategory::orderBy('order_column')->get();
+        $shifts = Shift::orderBy('order_column')->get();
+        $sources = Source::orderBy('order_column')->get();
+        $paymentMethods = PaymentMethod::orderBy('order_column')->get();
+
         return view('transactions.index', compact(
             'transactions',
             'totalIncome',
@@ -115,7 +158,11 @@ class TransactionController extends Controller
             'dateTo',
             'years',
             'selectedYear',
-            'selectedMonth'
+            'selectedMonth',
+            'expenseCategories',
+            'shifts',
+            'sources',
+            'paymentMethods'
         ));
     }
 
@@ -236,6 +283,14 @@ class TransactionController extends Controller
         ]);
 
         $transaction->update($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('Transaction updated successfully!'),
+                'transaction' => $transaction->load(['user', 'store', 'expenseCategory', 'shift', 'source', 'paymentMethod'])
+            ]);
+        }
 
         $message = __('Transaction for :store on :date updated successfully!', [
             'store' => $transaction->store->name,
