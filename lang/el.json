@@ -224,5 +224,15 @@
     "Go to page :page": "Μετάβαση στη σελίδα :page",
     "pagination.next": "Επόμενο",
     "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Ευχαριστούμε για την εγγραφή! Πριν ξεκινήσετε, μπορείτε να επαληθεύσετε τη διεύθυνση email σας κάνοντας κλικ στον σύνδεσμο που μόλις σας στείλαμε; Αν δεν λάβατε το email, θα σας στείλουμε ευχαρίστως ένα άλλο.",
-    "The language field is required.": "Το πεδίο γλώσσα είναι υποχρεωτικό."
+    "The language field is required.": "Το πεδίο γλώσσα είναι υποχρεωτικό.",
+    "Bulk Add Records": "Πολλαπλή Καταγραφή",
+    "Adding multiple days for": "Προσθήκη πολλαπλών ημερών για",
+    "Add Another Day": "Προσθήκη Άλλης Ημέρας",
+    "Save All Records": "Αποθήκευση Όλων των Εγγραφών",
+    "Remove This Day": "Αφαίρεση Αυτής της Ημέρας",
+    "Bulk Add": "Πολλαπλή Προσθήκη",
+    ":count record(s) saved successfully across multiple dates!": ":count εγγραφή(ές) αποθηκεύτηκαν επιτυχώς σε πολλαπλές ημερομηνίες!",
+    "No Shift": "Χωρίς Βάρδια",
+    "No Source": "Χωρίς Πηγή",
+    "No Payment": "Χωρίς Πληρωμή"
 }
