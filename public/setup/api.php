@@ -41,6 +41,25 @@ function bootstrap_laravel()
     }
 }
 
+function ensure_directories_exist()
+{
+    global $basePath;
+    $dirs = [
+        'storage/app/public',
+        'storage/framework/cache/data',
+        'storage/framework/sessions',
+        'storage/framework/testing',
+        'storage/framework/views',
+        'bootstrap/cache'
+    ];
+    foreach ($dirs as $dir) {
+        $fullPath = $basePath . '/' . $dir;
+        if (!is_dir($fullPath)) {
+            @mkdir($fullPath, 0755, true);
+        }
+    }
+}
+
 // --- SECURITY CHECKS ---
 if (file_exists($lockFilePath)) send_error('Application is already installed.');
 
@@ -49,6 +68,7 @@ $action = $_POST['action'] ?? '';
 
 switch ($action) {
     case 'check_requirements':
+        ensure_directories_exist();
         $checks = [];
         $checks[] = ['message' => 'PHP Version >= 8.1.0 (' . PHP_VERSION . ' detected)', 'success' => version_compare(PHP_VERSION, '8.1.0', '>=')];
         $required_extensions = ['Ctype', 'Fileinfo', 'JSON', 'Mbstring', 'OpenSSL', 'PDO', 'Tokenizer', 'XML'];
@@ -149,15 +169,29 @@ switch ($action) {
             }
 
             $output .= "\nCreating storage link...\n";
+            ensure_directories_exist();
             $link = $basePath . '/public/storage';
             $target = $basePath . '/storage/app/public';
             if (file_exists($link)) {
                 $output .= "Storage link already exists.\n";
-            } elseif (function_exists('symlink')) {
-                symlink($target, $link);
-                $output .= "Storage link created successfully.\n";
             } else {
-                $output .= "Warning: `symlink` function is disabled. Please create the storage link manually.\n";
+                $success = false;
+                if (function_exists('symlink')) {
+                    $success = @symlink($target, $link);
+                }
+
+                if (!$success && strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    // Try Windows Junction as fallback
+                    $command = "mklink /J \"" . str_replace('/', '\\', $link) . "\" \"" . str_replace('/', '\\', $target) . "\"";
+                    @exec($command, $output_exec, $return_val);
+                    $success = ($return_val === 0);
+                }
+
+                if ($success) {
+                    $output .= "Storage link created successfully.\n";
+                } else {
+                    $output .= "Warning: Could not create storage link. Please create it manually.\n";
+                }
             }
         } catch (\Throwable $e) {
             $output .= "\n\nAN ARTISAN ERROR OCCURRED:\n" . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine();

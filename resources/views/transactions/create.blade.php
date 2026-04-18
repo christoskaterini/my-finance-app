@@ -205,6 +205,7 @@
 
                 if (target.classList.contains('amount-input') || target.classList.contains('notes-input')) {
                     e.preventDefault();
+                    if (e.repeat) return;
 
                     const allInputs = Array.from(addRecordForm.querySelectorAll('.amount-input, .notes-input'));
                     const currentIndex = allInputs.indexOf(target);
@@ -212,11 +213,15 @@
 
                     if (nextInput) {
                         nextInput.focus();
-                    } else {
-                        addRecordForm.querySelector('button[type="submit"]').focus();
                     }
                 }
             }
+        });
+
+        addRecordForm.addEventListener('submit', function() {
+            const submitBtn = addRecordForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {{__("Saving...")}}';
         });
 
         populateForm();
