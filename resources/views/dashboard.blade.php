@@ -24,10 +24,14 @@
         </div>
 
         <div id="main-action-area" class="text-center mt-4" style="display: none;">
-            {{-- This is now a link, not a button --}}
-            <a href="#" id="add-record-link" class="btn btn-primary btn-lg" style="min-width: 250px;">
-                <i class="bi bi-plus-circle-dotted me-2"></i> {{ __('Add Record') }}
-            </a>
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <a href="#" id="add-record-link" class="btn btn-primary btn-lg" style="min-width: 250px;">
+                    <i class="bi bi-plus-circle-dotted me-2"></i> {{ __('Add Record') }}
+                </a>
+                <a href="#" id="bulk-add-link" class="btn btn-outline-primary btn-lg" style="min-width: 250px;">
+                    <i class="bi bi-stack me-2"></i> {{ __('Bulk Add') }}
+                </a>
+            </div>
             <div class="mt-2 text-muted" id="active-store-label"></div>
         </div>
     </div>
@@ -44,6 +48,7 @@
             const mainActionArea = document.getElementById('main-action-area');
             const activeStoreLabel = document.getElementById('active-store-label');
             const addRecordLink = document.getElementById('add-record-link');
+            const bulkAddLink = document.getElementById('bulk-add-link');
 
             const handleStoreButtonClick = (button) => {
                 storeButtons.forEach(btn => btn.classList.replace('btn-primary', 'btn-outline-secondary'));
@@ -53,6 +58,7 @@
                 const selectedStoreName = button.dataset.storeName;
 
                 addRecordLink.href = `{{ route('transactions.create') }}?store_id=${selectedStoreId}`;
+                bulkAddLink.href = `{{ route('transactions.bulkCreate') }}?store_id=${selectedStoreId}`;
 
                 mainActionArea.style.display = 'block';
                 activeStoreLabel.textContent = `{{ __('for') }} "${selectedStoreName}"`;

@@ -200,6 +200,40 @@ class TransactionController extends Controller
         ));
     }
 
+    public function bulkCreate(Request $request)
+    {
+        $selectedStoreId = $request->query('store_id');
+        $selectedStore = Store::find($selectedStoreId);
+
+        if (!$selectedStore) {
+            return redirect()->route('dashboard')->withErrors(['general' => __('Please select a valid store first.')]);
+        }
+
+        $expenseCategories = ExpenseCategory::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
+
+        $shifts = Shift::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
+
+        $sources = Source::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
+
+        $paymentMethods = PaymentMethod::whereHas('stores', function ($q) use ($selectedStoreId) {
+            $q->where('store_id', $selectedStoreId);
+        })->orderBy('order_column')->get();
+
+        return view('transactions.bulk_create', compact(
+            'selectedStore',
+            'expenseCategories',
+            'shifts',
+            'sources',
+            'paymentMethods'
+        ));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -250,6 +284,73 @@ class TransactionController extends Controller
         }
 
         $message = __(':count record(s) saved successfully!', ['count' => $transactionCount]);
+        return redirect()->route('dashboard')->with('success', $message);
+    }
+
+    public function bulkStore(Request $request)
+    {
+        $validated = $request->validate([
+            'store_id' => 'required|exists:stores,id',
+            'records' => 'required|array',
+            'records.*.transaction_date' => 'required|date',
+            'records.*.expenses' => 'nullable|array',
+            'records.*.expenses.*.expense_category_id' => 'required_with:records.*.expenses.*.amount|exists:expense_categories,id',
+            'records.*.expenses.*.amount' => 'nullable|numeric|gt:0',
+            'records.*.expenses.*.notes' => 'nullable|string|max:255',
+            'records.*.income' => 'nullable|array',
+            'records.*.income.*.shift_id' => 'required_with:records.*.income.*.amount|exists:shifts,id',
+            'records.*.income.*.source_id' => 'required_with:records.*.income.*.amount|exists:sources,id',
+            'records.*.income.*.payment_method_id' => 'required_with:records.*.income.*.amount|exists:payment_methods,id',
+            'records.*.income.*.amount' => 'nullable|numeric|gt:0',
+        ]);
+
+        $user_id = Auth::id();
+        $totalTransactionCount = 0;
+
+        foreach ($validated['records'] as $record) {
+            $transactionDate = $record['transaction_date'];
+
+            if (!empty($record['expenses'])) {
+                foreach ($record['expenses'] as $expense) {
+                    if (!empty($expense['amount']) && !empty($expense['expense_category_id'])) {
+                        Transaction::create([
+                            'user_id' => $user_id,
+                            'store_id' => $validated['store_id'],
+                            'transaction_date' => $transactionDate,
+                            'type' => 'expense',
+                            'expense_category_id' => $expense['expense_category_id'],
+                            'amount' => $expense['amount'],
+                            'notes' => $expense['notes'] ?? null
+                        ]);
+                        $totalTransactionCount++;
+                    }
+                }
+            }
+
+            if (!empty($record['income'])) {
+                foreach ($record['income'] as $income) {
+                    if (!empty($income['amount'])) {
+                        Transaction::create([
+                            'user_id' => $user_id,
+                            'store_id' => $validated['store_id'],
+                            'transaction_date' => $transactionDate,
+                            'type' => 'income',
+                            'shift_id' => $income['shift_id'],
+                            'source_id' => $income['source_id'],
+                            'payment_method_id' => $income['payment_method_id'],
+                            'amount' => $income['amount']
+                        ]);
+                        $totalTransactionCount++;
+                    }
+                }
+            }
+        }
+
+        if ($totalTransactionCount == 0) {
+            return back()->withErrors(['general' => __('You must enter at least one valid amount to save.')])->withInput();
+        }
+
+        $message = __(':count record(s) saved successfully across multiple dates!', ['count' => $totalTransactionCount]);
         return redirect()->route('dashboard')->with('success', $message);
     }
 

@@ -50,6 +50,8 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Transaction Routes
+    Route::get('transactions/bulk-create', [TransactionController::class, 'bulkCreate'])->name('transactions.bulkCreate');
+    Route::post('transactions/bulk-store', [TransactionController::class, 'bulkStore'])->name('transactions.bulkStore');
     Route::delete('transactions/bulk-delete', [TransactionController::class, 'bulkDelete'])->name('transactions.bulkDelete');
     Route::resource('transactions', TransactionController::class);
     Route::get('/create', [TransactionController::class, 'create'])->name('create');
