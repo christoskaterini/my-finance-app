@@ -298,7 +298,8 @@
                     </thead>
                     <tbody>
                         @forelse ($transactions as $transaction)
-                        <tr data-type="{{ $transaction->type }}" 
+                        <tr data-id="{{ $transaction->id }}"
+                            data-type="{{ $transaction->type }}" 
                             data-date="{{ $transaction->transaction_date_for_edit }}"
                             data-store-id="{{ $transaction->store_id }}"
                             data-amount="{{ $transaction->amount }}"
@@ -306,8 +307,13 @@
                             data-category-id="{{ $transaction->expense_category_id }}"
                             data-shift-id="{{ $transaction->shift_id }}"
                             data-source-id="{{ $transaction->source_id }}"
-                            data-payment-method-id="{{ $transaction->payment_method_id }}">
-                            <td class="col-checkbox"><input class="form-check-input row-checkbox" type="checkbox" name="ids[]" value="{{ $transaction->id }}"></td>
+                            data-payment-method-id="{{ $transaction->payment_method_id }}"
+                            data-can-edit="{{ Auth::user()->can('update', $transaction) ? 'true' : 'false' }}">
+                            <td class="col-checkbox">
+                                @can('delete', $transaction)
+                                <input class="form-check-input row-checkbox" type="checkbox" name="ids[]" value="{{ $transaction->id }}">
+                                @endcan
+                            </td>
                             <td data-label="{{__('Date')}}">{{ $transaction->transaction_date }}</td>
                             <td data-label="{{__('User')}}">{{ $transaction->user->name ?? __('(Deleted User)') }}</td>
                             <td data-label="{{__('Store')}}">{{ $transaction->store->name ?? __('(Deleted Store)') }}</td>
@@ -328,9 +334,23 @@
                             </td>
                             <td data-label="{{__('Amount')}}" class="text-end">@currency($transaction->amount)</td>
                             <td data-label="{{__('Actions')}}" class="text-end">
-                                <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </a>
+                                <div class="d-flex justify-content-end gap-1">
+                                    @can('update', $transaction)
+                                    <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn btn-sm btn-outline-secondary" title="{{ __('Edit') }}">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    @endcan
+                                    
+                                    @can('delete', $transaction)
+                                    <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ __('Delete') }}">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                    @endcan
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -452,9 +472,9 @@
         function renderTable() {
             const rows = document.querySelectorAll('.transactions-table tbody tr');
             rows.forEach(row => {
-                const idInput = row.querySelector('.row-checkbox');
-                if (!idInput) return;
-                const id = idInput.value;
+                const id = row.dataset.id;
+                if (row.dataset.canEdit !== 'true') return;
+                
                 const transaction = getRowData(row);
                 enableRowEditing(row, id, transaction);
             });
