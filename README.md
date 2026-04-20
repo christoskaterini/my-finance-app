@@ -4,11 +4,14 @@ My Finance is a modern, self-hosted web application built with the Laravel frame
 
 ## Features
 
--   **Transaction Management:** Log all your income and expenses with details.
--   **Categorization:** Assign expenses to custom categories.
--   **Multi-Store Support:** Track finances across different stores or entities.
--   **Payment Methods:** Define and use various payment methods (Cash, Credit Card, etc.).
--   **Dynamic Settings:** Customize currency, language, and timezone through a user-friendly settings panel.
+-   **Transaction Management:** Log all your income and expenses with detailed metadata.
+-   **Spreadsheet Mode (Batch Editor):** Inline editing of multiple transactions directly in the table with smart keyboard navigation (Enter key) and real-time modification tracking.
+-   **Bulk Record Creation:** A powerful workflow to add multiple records across different days at once with automated focus-jumping for high-speed data entry.
+-   **Global Date Picker:** Integrated **Flatpickr** globally for a premium experience, featuring dark mode support, Greek/English localization, and consistent European date formatting (`dd/mm/yyyy`).
+-   **Advanced Reporting & Analysis:** Real-time summary cards and detailed monthly/annual reports with responsive layouts optimized for all devices.
+-   **Mobile-First Design:** Optimized filter systems and dashboard components ensure a premium experience on small screens.
+-   **Data Integrity:** Robust verification modals for batch saves, unsaved changes, and deletion prevention.
+-   **Categorization & Entities:** Assign expenses to custom categories and track finances across different stores or entities.
 -   **Web-Based Installer:** A simple, guided setup wizard to get you up and running in minutes.
 
 ![My Finance Screenshot](public/05.png)
