@@ -321,6 +321,13 @@
             });
         });
 
+        // Auto-highlight amount fields on focus
+        document.addEventListener('focusin', function(e) {
+            if (e.target.classList.contains('amount-input')) {
+                e.target.select();
+            }
+        });
+
         // Initial Block
         createRecordBlock();
     });

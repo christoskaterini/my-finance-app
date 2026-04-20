@@ -234,5 +234,13 @@
     ":count record(s) saved successfully across multiple dates!": ":count εγγραφή(ές) αποθηκεύτηκαν επιτυχώς σε πολλαπλές ημερομηνίες!",
     "No Shift": "Χωρίς Βάρδια",
     "No Source": "Χωρίς Πηγή",
-    "No Payment": "Χωρίς Πληρωμή"
+    "No Payment": "Χωρίς Πληρωμή",
+    "Unsaved Changes": "Μη Αποθηκευμένες Αλλαγές",
+    "You have unsaved changes in spreadsheet mode. Do you want to save them before leaving?": "Έχετε μη αποθηκευμένες αλλαγές στη λειτουργία υπολογιστικού φύλλου. Θέλετε να τις αποθηκεύσετε πριν αποχωρήσετε;",
+    "Save and Exit": "Αποθήκευση και Έξοδος",
+    "Discard and Exit": "Απόρριψη και Έξοδος",
+    "Stay in Spreadsheet Mode": "Παραμονή στη Λειτουργία Φύλλου",
+    "Confirm Save": "Επιβεβαίωση Αποθήκευσης",
+    "Are you sure you want to save the modified records?": "Είστε σίγουροι ότι θέλετε να αποθηκεύσετε τις τροποποιημένες εγγραφές;",
+    "Save Changes": "Αποθήκευση Αλλαγών"
 }

@@ -254,7 +254,7 @@
             });
         });
 
-        // --- Productivity: Auto-Focus Date ---
+        // --- Productivity: Auto-Focus Date & Auto-Highlight ---
         setTimeout(() => {
             const dateInput = document.getElementById('transaction_date');
             if (dateInput) {
@@ -265,6 +265,13 @@
                 setTimeout(() => dateInput.style.boxShadow = '', 1000);
             }
         }, 300);
+
+        // Auto-highlight amount fields on focus
+        document.addEventListener('focusin', function(e) {
+            if (e.target.classList.contains('amount-input')) {
+                e.target.select();
+            }
+        });
 
         populateForm();
     });

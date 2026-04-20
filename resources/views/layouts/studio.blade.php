@@ -183,6 +183,10 @@
             body.sidebar-toggled .sidebar-overlay {
                 display: block;
             }
+
+            .top-bar {
+                padding: .75rem 1rem !important;
+            }
         }
 
         @media (max-width: 575px) {
@@ -322,9 +326,9 @@
 
 <body>
     {{-- Toast Notification for Success Messages --}}
-    <div class="toast-container position-fixed top-50 start-50 translate-middle" style="z-index: 1100">
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="main-toast-container" style="z-index: 1100; pointer-events: none;">
         @if(session('success'))
-        <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="successToast" class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="pointer-events: auto;">
             <div class="d-flex">
                 <div class="toast-body">{{ session('success') }}</div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -385,6 +389,7 @@
                     </div>
                 </li>
 
+                @if(Auth::user()->isAdmin())
                 {{-- ACCORDION MENU SETTINGS --}}
                 <li class="nav-item mt-2">
                     <a class="nav-link d-flex justify-content-between {{ request()->routeIs('settings.index') ? 'active' : '' }}" data-bs-toggle="collapse" href="#settings-submenu" role="button" aria-expanded="{{ request()->routeIs('settings.index') ? 'true' : 'false' }}">
@@ -399,12 +404,11 @@
                             <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'sources' ? 'active' : '' }}" href="{{ url('/settings?tab=sources') }}"><span>{{__('Sources')}}</span></a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'payment-methods' ? 'active' : '' }}" href="{{ url('/settings?tab=payment-methods') }}"><span>{{__('Payment Methods')}}</span></a></li>
                             <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'general' ? 'active' : '' }}" href="{{ url('/settings?tab=general') }}"><span>{{__('General')}}</span></a></li>
-                            @if(Auth::user()->role == 'admin')
                             <li class="nav-item"><a class="nav-link {{ request()->routeIs('settings.users.*') ? 'active' : '' }}" href="{{ route('settings.users.index') }}"><span>{{__('Users')}}</span></a></li>
-                            @endif
                         </ul>
                     </div>
                 </li>
+                @endif
             </ul>
         </div>
         <!-- --- SIDEBAR FOOTER --- -->
@@ -497,11 +501,33 @@
             const toastEl = document.getElementById('successToast');
             if (toastEl) {
                 const toast = new bootstrap.Toast(toastEl, {
-                    autohide: true,
                     delay: 5000
                 });
                 toast.show();
             }
+
+            // Global helper for JS-triggered toasts
+            window.showAlert = function(message, type = 'success') {
+                const container = document.getElementById('main-toast-container');
+                const toastId = 'toast-' + Date.now();
+                const html = `
+                    <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true" style="pointer-events: auto;">
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = html.trim();
+                const el = wrapper.firstChild;
+                container.appendChild(el);
+                
+                const bToast = new bootstrap.Toast(el, { delay: 5000 });
+                bToast.show();
+                
+                el.addEventListener('hidden.bs.toast', () => el.remove());
+            };
         });
     </script>
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
@@ -514,6 +540,7 @@
                 <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('Cancel')}}</button><button type="button" class="btn btn-danger" id="confirmDeleteButton">{{__('Delete')}}</button></div>
             </div>
         </div>
+    </div>
 </body>
 
 </html>

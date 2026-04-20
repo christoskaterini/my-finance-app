@@ -63,8 +63,8 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::get('/charts/data', [ChartController::class, 'fetchChartData'])->name('charts.data');
     });
 
-    // Settings Group
-    Route::prefix('settings')->name('settings.')->group(function () {
+    // Settings Group (Admin Only)
+    Route::prefix('settings')->name('settings.')->middleware('admin')->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');
         Route::post('/general', [SettingsController::class, 'updateGeneral'])->name('updateGeneral');
         Route::post('/logo', [SettingsController::class, 'updateLogo'])->name('updateLogo');
@@ -86,6 +86,6 @@ Route::middleware(['web', 'auth'])->group(function () {
         Route::post('payment-methods/update-order', [PaymentMethodController::class, 'updateOrder'])->name('payment-methods.updateOrder');
         Route::resource('payment-methods', PaymentMethodController::class)->except(['index', 'show', 'create', 'edit'])->names('payment-methods');
 
-        Route::resource('users', UserController::class)->middleware('admin');
+        Route::resource('users', UserController::class);
     });
 });

@@ -83,36 +83,56 @@
 
     /* Mobile Spreadsheet Adjustments (Card Mode) - Compact Single Line */
     @media (max-width: 575px) {
+        .spreadsheet-active .transactions-table {
+            table-layout: auto !important;
+            width: 100% !important;
+        }
+
         .spreadsheet-active .responsive-card-table td {
             flex-direction: row !important;
-            justify-content: flex-start !important; /* Changed from space-between to avoid gap */
+            justify-content: flex-start !important;
             align-items: center !important;
             height: auto !important;
-            padding: 0.5rem 1rem !important;
+            padding: 0.5rem 0.75rem !important;
+            overflow-x: hidden;
         }
 
         .spreadsheet-active .responsive-card-table td::before {
             margin-bottom: 0 !important;
-            width: 130px !important; /* Fixed width for labels to keep inputs aligned */
+            width: 90px !important; /* Aggressively reduced to fit 375px */
             flex-shrink: 0;
-            margin-right: 15px;
-            font-size: 0.85rem;
+            margin-right: 10px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .spreadsheet-active .ss-input,
         .spreadsheet-active .responsive-card-table td > div {
             flex-grow: 1 !important;
-            width: auto !important;
+            width: 100% !important;
             margin-top: 0;
-            min-width: 0; /* Prevents overflow */
+            min-width: 0 !important;
         }
         
-        .spreadsheet-active .col-checkbox {
-            width: auto !important;
-            text-align: left !important;
+        .transactions-table .col-checkbox {
+            width: 100% !important;
+            text-align: center !important;
             display: flex !important;
-            justify-content: flex-start !important;
+            justify-content: center !important;
             align-items: center !important;
+            padding: 0.5rem !important;
+        }
+
+        .transactions-table .col-checkbox::before {
+            display: none !important;
+        }
+
+        /* Prevent filter form row from causing overflow */
+        #filter-form.row {
+            margin-left: 0;
+            margin-right: 0;
         }
     }
 
@@ -198,7 +218,7 @@
 {{-- Main Data Table --}}
 <div class="card">
     <div class="card-header bg-body-tertiary py-2">
-        <form action="{{ route('transactions.index') }}" method="GET" class="row g-2 align-items-center">
+        <form id="filter-form" action="{{ route('transactions.index') }}" method="GET" class="row g-2 align-items-center">
                 {{-- Date Range --}}
                 <div class="col-md-auto" id="date-range-pickers">
                     <input type="date" class="form-control form-control-sm" name="date_from" value="{{ $dateFrom ?? '' }}" placeholder="{{ __('Date From') }}">
@@ -340,16 +360,6 @@
                                         <i class="bi bi-pencil-fill"></i>
                                     </a>
                                     @endcan
-                                    
-                                    @can('delete', $transaction)
-                                    <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" onsubmit="return confirm('{{ __('Are you sure?') }}')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="{{ __('Delete') }}">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </form>
-                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -380,6 +390,45 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
                 <button type="button" class="btn btn-danger" id="confirm-delete-btn">{{ __('Delete') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Unsaved Changes Confirmation Modal --}}
+<div class="modal fade" id="unsavedChangesModal" tabindex="-1" aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="unsavedChangesModalLabel">{{ __('Unsaved Changes') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
+            </div>
+            <div class="modal-body">
+                {{ __('You have unsaved changes in spreadsheet mode. Do you want to save them before leaving?') }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Stay in Spreadsheet Mode') }}</button>
+                <button type="button" class="btn btn-danger" id="discard-exit-btn">{{ __('Discard and Exit') }}</button>
+                <button type="button" class="btn btn-success" id="save-exit-btn">{{ __('Save and Exit') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Save Confirmation Modal --}}
+<div class="modal fade" id="saveConfirmModal" tabindex="-1" aria-labelledby="saveConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="saveConfirmModalLabel">{{ __('Confirm Save') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
+            </div>
+            <div class="modal-body">
+                {{ __('Are you sure you want to save the modified records?') }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                <button type="button" class="btn btn-success" id="confirm-save-btn">{{ __('Save Changes') }}</button>
             </div>
         </div>
     </div>
@@ -451,23 +500,142 @@
         const toggleSsBtn = document.getElementById('toggle-spreadsheet-mode');
         const saveAllBtn = document.getElementById('save-all-btn');
         const cancelSsBtn = document.getElementById('cancel-spreadsheet-btn');
+        const unsavedModal = new bootstrap.Modal(document.getElementById('unsavedChangesModal'));
+        const saveConfirmModal = new bootstrap.Modal(document.getElementById('saveConfirmModal'));
+        const discardExitBtn = document.getElementById('discard-exit-btn');
+        const saveExitBtn = document.getElementById('save-exit-btn');
+        const confirmSaveBtn = document.getElementById('confirm-save-btn');
+        const filterForm = document.getElementById('filter-form');
         let spreadsheetMode = false;
+        let pendingAction = null;
+
+        // Warn on page refresh/close
+        window.addEventListener('beforeunload', function (e) {
+            if (document.querySelectorAll('.row-modified').length > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Intercept filter form submission
+        filterForm.addEventListener('submit', function(e) {
+            if (spreadsheetMode && document.querySelectorAll('.row-modified').length > 0) {
+                e.preventDefault();
+                pendingAction = () => filterForm.submit();
+                unsavedModal.show();
+            }
+        });
+
+        function handleExitSpreadsheet() {
+            const modifiedRows = document.querySelectorAll('.row-modified');
+            if (modifiedRows.length > 0) {
+                pendingAction = () => window.location.reload();
+                unsavedModal.show();
+            } else {
+                window.location.reload();
+            }
+        }
 
         toggleSsBtn.addEventListener('click', function() {
-            spreadsheetMode = !spreadsheetMode;
-            
-            if (spreadsheetMode) {
+            if (!spreadsheetMode) {
+                spreadsheetMode = true;
                 document.body.classList.add('spreadsheet-active');
                 this.classList.replace('btn-outline-secondary', 'btn-secondary');
                 saveAllBtn.classList.remove('d-none');
                 cancelSsBtn.classList.remove('d-none');
                 renderTable();
             } else {
+                handleExitSpreadsheet();
+            }
+        });
+
+        cancelSsBtn.addEventListener('click', handleExitSpreadsheet);
+        
+        discardExitBtn.addEventListener('click', function() {
+            if (pendingAction) {
+                pendingAction();
+            } else {
                 window.location.reload();
             }
         });
 
-        cancelSsBtn.addEventListener('click', () => window.location.reload());
+        saveExitBtn.addEventListener('click', () => saveAllChanges(true));
+        
+        saveAllBtn.addEventListener('click', () => {
+            if (saveAllBtn.disabled) return;
+            saveConfirmModal.show();
+        });
+
+        confirmSaveBtn.addEventListener('click', () => saveAllChanges(false));
+
+        async function saveAllChanges(isExiting = false) {
+            const modifiedRows = document.querySelectorAll('.row-modified');
+            if (modifiedRows.length === 0) return;
+
+            saveAllBtn.disabled = true;
+            saveExitBtn.disabled = true;
+            confirmSaveBtn.disabled = true;
+            const originalIcon = saveAllBtn.innerHTML;
+            saveAllBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
+
+            let successCount = 0;
+            for (const row of modifiedRows) {
+                const id = row.dataset.id;
+                const data = { type: row.dataset.type };
+                row.querySelectorAll('.ss-input').forEach(input => {
+                    data[input.dataset.field] = input.value;
+                });
+
+                try {
+                    const response = await fetch(`/transactions/${id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    if (response.ok) {
+                        row.classList.remove('row-modified');
+                        successCount++;
+                    }
+                } catch (e) {
+                    console.error('Error saving row', id, e);
+                }
+            }
+
+            saveAllBtn.innerHTML = originalIcon;
+            if (successCount > 0) {
+                window.showAlert(`${successCount} {{__('records updated successfully!')}}`, 'success');
+                
+                if (isExiting || pendingAction) {
+                    unsavedModal.hide();
+                    saveConfirmModal.hide();
+                    setTimeout(() => {
+                        if (pendingAction) {
+                            pendingAction();
+                            pendingAction = null;
+                        } else {
+                            window.location.reload();
+                        }
+                    }, 1000);
+                } else {
+                    saveConfirmModal.hide();
+                    saveAllBtn.disabled = false;
+                    confirmSaveBtn.disabled = false;
+                    
+                    // Reset save count badge
+                    const countContainer = document.getElementById('save-count-container');
+                    countContainer.innerHTML = '';
+                    saveAllBtn.disabled = true;
+                }
+            } else {
+                saveAllBtn.disabled = false;
+                saveExitBtn.disabled = false;
+                confirmSaveBtn.disabled = false;
+            }
+        }
 
         function renderTable() {
             const rows = document.querySelectorAll('.transactions-table tbody tr');
@@ -543,6 +711,18 @@
                     if (this.tagName === 'INPUT') this.select();
                 });
 
+                // Enter key navigation
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const allInputs = Array.from(document.querySelectorAll('.transactions-table .ss-input'));
+                        const index = allInputs.indexOf(this);
+                        if (index > -1 && index < allInputs.length - 1) {
+                            allInputs[index + 1].focus();
+                        }
+                    }
+                });
+
                 const checkChange = () => {
                     const isChanged = input.value !== input.dataset.original;
                     
@@ -577,58 +757,6 @@
                 input.addEventListener('input', checkChange);
                 input.addEventListener('change', checkChange);
             });
-        }
-
-        saveAllBtn.addEventListener('click', async function() {
-            const modifiedRows = document.querySelectorAll('.row-modified');
-            if (modifiedRows.length === 0) return;
-
-            this.disabled = true;
-            const originalIcon = this.innerHTML;
-            this.innerHTML = `<span class="spinner-border spinner-border-sm"></span>`;
-
-            let successCount = 0;
-            for (const row of modifiedRows) {
-                const id = row.querySelector('.row-checkbox').value;
-                const data = { type: row.dataset.type };
-                row.querySelectorAll('.ss-input').forEach(input => {
-                    data[input.dataset.field] = input.value;
-                });
-
-                try {
-                    const response = await fetch(`/transactions/${id}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify(data)
-                    });
-                    if (response.ok) {
-                        row.classList.remove('row-modified');
-                        successCount++;
-                    }
-                } catch (e) {
-                    console.error('Error saving row', id, e);
-                }
-            }
-
-            this.innerHTML = originalIcon;
-            showToast(`${successCount} {{__('records updated successfully!')}}`, 'success');
-            
-            if (successCount > 0) {
-                 setTimeout(() => window.location.reload(), 1000);
-            }
-        });
-
-        function showToast(message, type) {
-             const toast = document.createElement('div');
-             toast.className = `alert alert-${type} position-fixed bottom-0 end-0 m-3 shadow-sm animate__animated animate__fadeInUp`;
-             toast.style.zIndex = '9999';
-             toast.textContent = message;
-             document.body.appendChild(toast);
-             setTimeout(() => toast.remove(), 3000);
         }
 
         // --- Filter Interaction Logic ---

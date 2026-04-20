@@ -30,7 +30,7 @@ class Transaction extends Model
         'store_id' => 'integer',
         'transaction_date' => 'date',
         'type' => 'string',
-        'amount' => 'double',
+        'amount' => 'decimal:2',
         'expense_category_id' => 'integer',
         'shift_id' => 'integer',
         'source_id' => 'integer',

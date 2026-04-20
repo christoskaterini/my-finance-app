@@ -223,5 +223,12 @@
   "Pagination Navigation": "",
   "pagination.previous": "",
   "Go to page :page": "",
-  "pagination.next": ""
+  "pagination.next": "",
+  "Unsaved Changes": "Unsaved Changes",
+  "You have unsaved changes in spreadsheet mode. Do you want to save them before leaving?": "You have unsaved changes in spreadsheet mode. Do you want to save them before leaving?",
+  "Save and Exit": "Save and Exit",
+  "Discard and Exit": "Discard and Exit",
+  "Stay in Spreadsheet Mode": "Stay in Spreadsheet Mode",
+  "Confirm Save": "Confirm Save",
+  "Are you sure you want to save the modified records?": "Are you sure you want to save the modified records?"
 }
