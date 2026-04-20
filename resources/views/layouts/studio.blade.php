@@ -12,6 +12,8 @@
     <meta name="theme-color" content="#212529">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-dark-theme" disabled>
     <style>
         body {
             background-color: var(--bs-body-bg);
@@ -463,6 +465,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/gr.js"></script>
     @stack('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -528,6 +532,65 @@
                 
                 el.addEventListener('hidden.bs.toast', () => el.remove());
             };
+
+            // --- Flatpickr Global Initialization ---
+            const flatpickrDarkTheme = document.getElementById('flatpickr-dark-theme');
+            function updateFlatpickrTheme() {
+                const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+                if (isDark) {
+                    flatpickrDarkTheme.removeAttribute('disabled');
+                } else {
+                    flatpickrDarkTheme.setAttribute('disabled', 'disabled');
+                }
+            }
+            updateFlatpickrTheme();
+
+            // Observe theme changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+                        updateFlatpickrTheme();
+                    }
+                });
+            });
+            observer.observe(document.documentElement, { attributes: true });
+
+            window.initDatePickers = function(container = document) {
+                const appLocale = document.documentElement.lang;
+                const fpLocale = (appLocale === 'el' || appLocale === 'gr') ? 'gr' : 'en';
+                
+                const inputs = container.querySelectorAll('input[type="date"], .datepicker');
+                inputs.forEach(el => {
+                    // Prevent double initialization
+                    if (el._flatpickr) return;
+
+                    const config = {
+                        altInput: true,
+                        altFormat: "d/m/Y",
+                        dateFormat: "Y-m-d",
+                        locale: fpLocale,
+                        allowInput: true,
+                        disableMobile: "true",
+                        onReady: function(selectedDates, dateStr, instance) {
+                            if (el.hasAttribute('data-auto-open')) {
+                                setTimeout(() => instance.open(), 300);
+                            }
+                            // Ensure the alt input has the same classes as the original
+                            if (instance.altInput) {
+                                instance.altInput.className = el.className;
+                                // If it was centered, keep it centered
+                                if (el.classList.contains('text-center')) {
+                                    instance.altInput.classList.add('text-center');
+                                }
+                            }
+                        }
+                    };
+
+                    flatpickr(el, config);
+                });
+            };
+
+            window.initDatePickers();
         });
     </script>
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1">

@@ -230,5 +230,7 @@
   "Discard and Exit": "Discard and Exit",
   "Stay in Spreadsheet Mode": "Stay in Spreadsheet Mode",
   "Confirm Save": "Confirm Save",
-  "Are you sure you want to save the modified records?": "Are you sure you want to save the modified records?"
+  "Are you sure you want to save the modified records?": "Are you sure you want to save the modified records?",
+  "Total Expenses": "Total Expenses",
+  "Total Income": "Total Income"
 }

@@ -81,7 +81,7 @@
         "labels": {
             "expenses": "{{__('Expenses')}}",
             "income": "{{__('Income')}}",
-            "total": "{{__('Total')}}",
+            "totalExpenses": "{{__('Total Expenses')}}",
             "totalIncome": "{{__('Total Income')}}",
             "notes": "{{__('Notes')}}",
             "amount": "{{__('Amount')}}",
@@ -109,6 +109,7 @@
         function createRecordBlock(suggestedDate = null) {
             const index = recordCount++;
             const dateValue = suggestedDate || new Date().toISOString().split('T')[0];
+            const isFirst = index === 0;
             
             const block = document.createElement('div');
             block.className = 'record-block rounded shadow-sm mb-5 overflow-hidden';
@@ -120,7 +121,7 @@
                     <div class="input-group shadow-sm" style="max-width: 250px;">
                         <span class="input-group-text border-secondary-subtle text-primary bg-primary bg-opacity-10"><i class="bi bi-calendar-event"></i></span>
                         <input type="date" class="form-control border-secondary-subtle fw-bold text-center transaction-date-input" 
-                               name="records[${index}][transaction_date]" value="${dateValue}" required>
+                               name="records[${index}][transaction_date]" value="${dateValue}" required ${isFirst ? 'data-auto-open' : ''}>
                     </div>
                     ${index > 0 ? `<div class="w-100 w-sm-auto d-flex justify-content-center justify-content-sm-end"><button type="button" class="btn btn-sm btn-outline-danger remove-block-btn" data-index="${index}"><i class="bi bi-trash"></i> ${labels.removeDay}</button></div>` : ''}
                 </div>
@@ -136,7 +137,7 @@
                                 </div>
                                 <div id="expense-lines-${index}" class="py-1 line-container"></div>
                                 <div class="record-section-footer d-flex justify-content-between align-items-center border-top pt-2 mt-2">
-                                    <div class="fw-bold text-danger">${labels.total}: <span class="expense-total">0.00</span></div>
+                                    <div class="fw-bold text-danger">${labels.totalExpenses}: <span class="expense-total">0.00</span></div>
                                     <div class="d-flex gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-danger remove-expense-line-btn" tabindex="-1"><i class="bi bi-dash"></i></button>
                                         <button type="button" class="btn btn-sm btn-danger add-expense-line-btn" tabindex="-1"><i class="bi bi-plus"></i></button>
@@ -166,10 +167,9 @@
             container.appendChild(block);
             populateBlock(index);
             
-            // Focus on the date field of the new block
-            if (index > 0) {
-                 const dateInput = block.querySelector('.transaction-date-input');
-                 if(dateInput) dateInput.focus();
+            // Initialize Flatpickr on the new block's date field
+            if (window.initDatePickers) {
+                window.initDatePickers(block);
             }
 
             return block;
@@ -319,6 +319,34 @@
                 btn.disabled = true;
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
             });
+        });
+
+        // --- Navigation Logic: Enter key moves to next field ---
+        form.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const target = e.target;
+                
+                // Allow enter on buttons
+                if (target.tagName === 'BUTTON' || target.type === 'submit') return;
+
+                e.preventDefault(); // Prevent form submission
+                if (e.repeat) return;
+
+                // Find only the actual data-entry fields
+                const focusable = Array.from(form.querySelectorAll('.transaction-date-input, .amount-input, .notes-input, .form-select')).filter(el => {
+                    // Filter out hidden, disabled, readonly, or Flatpickr's original hidden inputs
+                    return !el.disabled && 
+                           !el.readOnly && 
+                           el.offsetParent !== null && 
+                           el.type !== 'hidden' &&
+                           !el.classList.contains('flatpickr-input'); // We only want the visible alt-input for flatpickr
+                });
+                
+                const index = focusable.indexOf(target);
+                if (index > -1 && index < focusable.length - 1) {
+                    focusable[index + 1].focus();
+                }
+            }
         });
 
         // Auto-highlight amount fields on focus

@@ -27,11 +27,12 @@
     }
 
     .transactions-table .col-amount {
-        width: 12%;
+        width: 15%;
+        white-space: nowrap;
     }
 
     .transactions-table .col-actions {
-        width: 10%;
+        width: 7%;
     }
 
     /* Default Spacing */
@@ -183,34 +184,53 @@
         background-color: rgba(0, 0, 0, 0.3);
         color: #fff;
     }
+
+    /* Constrain Date Filter Widths on Desktop */
+    @media (min-width: 576px) {
+        #date-range-pickers, #date-range-pickers2 {
+            width: 120px !important;
+        }
+    }
+    #date-range-pickers .form-control, #date-range-pickers2 .form-control {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
 </style>
 @endpush
 
 @section('content')
 {{-- Summary Cards --}}
-<div class="row">
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card card-body d-flex flex-row justify-content-between align-items-center">
-            <h6 class="text-muted mb-0">{{__('Total Income')}}</h6>
-            <h4 class="text-success mb-0">@currency($totalIncome)</h4>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+            <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-center align-items-center text-center">
+                <h6 class="text-muted mb-1 small text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">{{__('Total Income')}}</h6>
+                <h4 class="text-success mb-0 fw-bold text-nowrap" style="font-size: clamp(1rem, 3.5vw, 1.4rem);">@currency($totalIncome)</h4>
+            </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card card-body d-flex flex-row justify-content-between align-items-center">
-            <h6 class="text-muted mb-0">{{__('Total Expenses')}}</h6>
-            <h4 class="text-danger mb-0">@currency($totalExpenses)</h4>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+            <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-center align-items-center text-center">
+                <h6 class="text-muted mb-1 small text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">{{__('Total Expenses')}}</h6>
+                <h4 class="text-danger mb-0 fw-bold text-nowrap" style="font-size: clamp(1rem, 3.5vw, 1.4rem);">@currency($totalExpenses)</h4>
+            </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card card-body d-flex flex-row justify-content-between align-items-center">
-            <h6 class="text-muted mb-0">{{__('Net Total')}}</h6>
-            <h4 class="{{ $netTotal >= 0 ? 'text-success' : 'text-danger' }} mb-0">@currency($netTotal)</h4>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+            <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-center align-items-center text-center">
+                <h6 class="text-muted mb-1 small text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">{{__('Net Total')}}</h6>
+                <h4 class="{{ $netTotal >= 0 ? 'text-success' : 'text-danger' }} mb-0 fw-bold text-nowrap" style="font-size: clamp(1rem, 3.5vw, 1.4rem);">@currency($netTotal)</h4>
+            </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card card-body d-flex flex-row justify-content-between align-items-center">
-            <h6 class="text-muted mb-0">{{__('Transactions')}}</h6>
-            <h4 class="mb-0">{{ $transactionCount }}</h4>
+    <div class="col-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+            <div class="card-body p-2 p-sm-3 d-flex flex-column justify-content-center align-items-center text-center">
+                <h6 class="text-muted mb-1 small text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">{{__('Transactions')}}</h6>
+                <h4 class="mb-0 fw-bold text-nowrap" style="font-size: clamp(1rem, 3.5vw, 1.4rem);">{{ $transactionCount }}</h4>
+            </div>
         </div>
     </div>
 </div>
@@ -220,15 +240,15 @@
     <div class="card-header bg-body-tertiary py-2">
         <form id="filter-form" action="{{ route('transactions.index') }}" method="GET" class="row g-2 align-items-center">
                 {{-- Date Range --}}
-                <div class="col-md-auto" id="date-range-pickers">
-                    <input type="date" class="form-control form-control-sm" name="date_from" value="{{ $dateFrom ?? '' }}" placeholder="{{ __('Date From') }}">
+                <div class="col-6 col-md-auto" id="date-range-pickers">
+                    <input type="date" class="form-control form-control-sm text-center" name="date_from" value="{{ $dateFrom ?? '' }}" placeholder="{{ __('Date From') }}">
                 </div>
-                <div class="col-md-auto" id="date-range-pickers2">
-                    <input type="date" class="form-control form-control-sm" name="date_to" value="{{ $dateTo ?? '' }}" placeholder="{{ __('Date To') }}">
+                <div class="col-6 col-md-auto" id="date-range-pickers2">
+                    <input type="date" class="form-control form-control-sm text-center" name="date_to" value="{{ $dateTo ?? '' }}" placeholder="{{ __('Date To') }}">
                 </div>
 
                 {{-- Year Selector --}}
-                <div class="col-md-auto">
+                <div class="col-6 col-md-auto">
                     <select name="year" id="year-select" class="form-select form-select-sm">
                         <option value="">{{ __('Year') }}</option>
                         @foreach($years as $year)
@@ -238,7 +258,7 @@
                 </div>
 
                 {{-- Month Selector --}}
-                <div class="col-md-auto">
+                <div class="col-6 col-md-auto">
                     <select name="month" id="month-select" class="form-select form-select-sm">
                         <option value="">{{ __('Month') }}</option>
                         @for ($m = 1; $m <= 12; $m++)
@@ -248,14 +268,14 @@
                 </div>
 
                 {{-- Other filters --}}
-                <div class="col-md-auto">
+                <div class="col-6 col-md-auto">
                     <select name="type" class="form-select form-select-sm">
                         <option value="">{{__('All Types')}}</option>
                         <option value="income" @selected(request('type')=='income' )>{{__('Income')}}</option>
                         <option value="expense" @selected(request('type')=='expense' )>{{__('Expense')}}</option>
                     </select>
                 </div>
-                <div class="col-md-auto">
+                <div class="col-6 col-md-auto">
                     <select name="store_id" class="form-select form-select-sm">
                         <option value="">{{__('All Stores')}}</option>
                         @foreach($stores as $store)
@@ -263,7 +283,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-auto">
+                <div class="col-6 col-md-auto">
                     <select name="per_page" id="per_page" class="form-select form-select-sm">
                         <option value="100" @selected(request('per_page')==100)>100</option>
                         <option value="250" @selected(request('per_page')==250)>250</option>
@@ -271,7 +291,7 @@
                         <option value="all" @selected(request('per_page')=='all' )>{{__('All')}}</option>
                     </select>
                 </div>
-                <div class="col-md-auto">
+                <div class="col-6 col-md-auto">
                     <input type="text" name="search" class="form-control form-control-sm" placeholder="{{ __('Search...') }}" value="{{ request('search') }}">
                 </div>
                 <div class="col-md-auto ms-auto">

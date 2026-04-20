@@ -242,5 +242,7 @@
     "Stay in Spreadsheet Mode": "Παραμονή στη Λειτουργία Φύλλου",
     "Confirm Save": "Επιβεβαίωση Αποθήκευσης",
     "Are you sure you want to save the modified records?": "Είστε σίγουροι ότι θέλετε να αποθηκεύσετε τις τροποποιημένες εγγραφές;",
-    "Save Changes": "Αποθήκευση Αλλαγών"
+    "Save Changes": "Αποθήκευση Αλλαγών",
+    "Total Expenses": "Σύνολο Εξόδων",
+    "Total Income": "Σύνολο Εσόδων"
 }

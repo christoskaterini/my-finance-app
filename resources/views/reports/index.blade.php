@@ -71,6 +71,36 @@
         font-weight: bold;
     }
 
+    /* Prevent Amount Wrapping */
+    .amount-cell, .header-amount, .stat-card .h5, .stat-card .h4 {
+        white-space: nowrap !important;
+    }
+
+    /* Stat Card Optimizations */
+    .stat-card .card-body {
+        padding: 0.75rem !important;
+    }
+
+    @media (max-width: 767px) {
+        .stat-card .card-body {
+            flex-direction: column !important;
+            text-align: center;
+        }
+        .stat-card .stat-card-dot {
+            margin-right: 0 !important;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .flex-grow-1 {
+            flex-direction: column !important;
+            width: 100%;
+        }
+        .stat-card .h5, .stat-card .h4 {
+            font-size: clamp(1rem, 4vw, 1.25rem) !important;
+            margin-left: 0 !important;
+            margin-top: 0.25rem;
+        }
+    }
+
     /* Responsive cards for mobile */
     @media (max-width: 575px) {
         .table-responsive .table thead {

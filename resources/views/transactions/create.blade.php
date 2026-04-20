@@ -30,7 +30,7 @@
         <div class="w-100 w-sm-auto d-flex justify-content-center justify-content-sm-end">
             <div class="input-group shadow-sm w-100" style="max-width: 250px;">
                 <span class="input-group-text border-secondary-subtle text-primary bg-primary bg-opacity-10"><i class="bi bi-calendar-event"></i></span>
-                <input type="date" class="form-control border-secondary-subtle fw-bold text-center" id="transaction_date" name="transaction_date" value="{{ date('Y-m-d') }}" required>
+                <input type="date" class="form-control border-secondary-subtle fw-bold text-center" id="transaction_date" name="transaction_date" value="{{ date('Y-m-d') }}" required data-auto-open>
             </div>
         </div>
     </div>
@@ -52,7 +52,7 @@
                 </div>
                 <div id="expense-lines-container" class="py-1"></div>
                 <div class="record-section-footer d-flex justify-content-between align-items-center border-top pt-2 mt-2">
-                    <div class="fw-bold text-danger">{{__('Total')}}: <span id="expense-total">0.00</span></div>
+                    <div class="fw-bold text-danger">{{__('Total Expenses')}}: <span id="expense-total">0.00</span></div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-outline-danger" id="remove-expense-btn" tabindex="-1"><i class="bi bi-dash"></i></button>
                         <button type="button" class="btn btn-sm btn-danger" id="add-expense-btn" tabindex="-1"><i class="bi bi-plus"></i></button>
@@ -253,18 +253,6 @@
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
             });
         });
-
-        // --- Productivity: Auto-Focus Date & Auto-Highlight ---
-        setTimeout(() => {
-            const dateInput = document.getElementById('transaction_date');
-            if (dateInput) {
-                dateInput.focus();
-                // Optional: Flash effect
-                dateInput.style.transition = 'all 0.3s';
-                dateInput.style.boxShadow = '0 0 10px rgba(13, 202, 240, 0.5)';
-                setTimeout(() => dateInput.style.boxShadow = '', 1000);
-            }
-        }, 300);
 
         // Auto-highlight amount fields on focus
         document.addEventListener('focusin', function(e) {
