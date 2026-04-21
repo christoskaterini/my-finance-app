@@ -23,7 +23,7 @@ Route::middleware('web')->group(function () {
             return redirect()->route('dashboard');
         }
         return view('auth.login');
-    })->name('login');
+    });
 
     // This loads the routes from auth.php and also puts them in the web group.
     require __DIR__ . '/auth.php';

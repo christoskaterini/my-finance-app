@@ -10,6 +10,12 @@
         width: 10%;
     }
 
+    @media (min-width: 768px) {
+        .search-input-md {
+            width: 160px !important;
+        }
+    }
+
     .transactions-table .col-user {
         width: 15%;
     }
@@ -292,7 +298,7 @@
                     </select>
                 </div>
                 <div class="col-6 col-md-auto">
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="{{ __('Search...') }}" value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control form-control-sm search-input-md" placeholder="{{ __('Search...') }}" value="{{ request('search') }}">
                 </div>
                 <div class="col-md-auto ms-auto">
                     <div class="d-flex justify-content-end gap-2">
