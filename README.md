@@ -103,30 +103,45 @@ Your application is now fully installed and secured.
 
 > **Warning:** The seeder creates a user with the email `christoskanotidis@gmail.com` and the password `password`. **Change this password immediately after your first login.**
 
-## Updating the Application
+## Updating the Application (Robust Method)
 
-1. **Pull the latest code changes from GitHub**
+To ensure a smooth update without errors for your users, follow these steps in your terminal:
 
+1. **Enable Maintenance Mode** (prevents errors while files are being replaced):
+    ```bash
+    php artisan down
+    ```
+
+2. **Pull the latest code changes**:
     ```bash
     git pull origin main
     ```
 
-2. **Install any new or updated packages**
-
+3. **Install/Update dependencies**:
     ```bash
     composer install --no-dev --optimize-autoloader
     ```
 
-3. **Run any new database migrations**
-
+4. **Run database migrations**:
     ```bash
     php artisan migrate --force
     ```
 
-4. **Clear cached files to ensure your new code is used**
-
+5. **Clear and Rebuild Cache**:
     ```bash
     php artisan optimize:clear
+    ```
+
+6. **Reset File Permissions** (CRITICAL if you ran the above as `root`):
+    Replace `www-data` with your web server's user if different (e.g., `apache` or your username).
+    ```bash
+    chown -R www-data:www-data .
+    chmod -R 775 storage bootstrap/cache
+    ```
+
+7. **Disable Maintenance Mode**:
+    ```bash
+    php artisan up
     ```
 
 ## Troubleshooting
