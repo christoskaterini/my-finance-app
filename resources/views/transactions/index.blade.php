@@ -366,7 +366,7 @@
                             <td data-label="{{__('Type')}}">
                                 <span class="badge bg-{{ $transaction->type == 'income' ? 'success' : 'danger' }}">{{ __(ucfirst($transaction->type)) }}</span>
                             </td>
-                            <td data-label="{{__('Details')}}">
+                            <td data-label="{{__('Details')}}" class="col-details">
                                 @if($transaction->type == 'income')
                                 {{ $transaction->shift->name ?? __('(deleted)') }} /
                                 {{ $transaction->source->name ?? __('(deleted)') }} /
@@ -378,7 +378,7 @@
                                 @endif
                                 @endif
                             </td>
-                            <td data-label="{{__('Amount')}}" class="text-end">@currency($transaction->amount)</td>
+                            <td data-label="{{__('Amount')}}" class="text-end col-amount">@currency($transaction->amount)</td>
                             <td data-label="{{__('Actions')}}" class="text-end">
                                 <div class="d-flex justify-content-end gap-1">
                                     @can('update', $transaction)

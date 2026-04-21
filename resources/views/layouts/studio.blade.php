@@ -15,6 +15,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-dark-theme" disabled>
     <style>
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             background-color: var(--bs-body-bg);
             display: flex;
@@ -156,8 +161,9 @@
         }
 
         .transactions-table th.col-amount,
-        .transactions-table td[data-label="{{__('Amount')}}"] {
+        .transactions-table td.col-amount {
             width: 130px;
+            white-space: nowrap;
         }
 
         .transactions-table th.col-actions,
@@ -210,6 +216,8 @@
                 padding: .5rem 1rem;
                 border: none;
                 text-align: right !important;
+                flex-wrap: wrap;
+                gap: 0.5rem;
             }
 
             .responsive-card-table td:not(:last-child) {
