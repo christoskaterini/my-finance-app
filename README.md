@@ -117,9 +117,13 @@ To ensure a smooth update without errors for your users, follow these steps in y
     git pull origin main
     ```
 
-3. **Install/Update dependencies**:
+3. **Install/Update dependencies** (Only needed if packages changed in `composer.json`):
+    *Note: If you only changed application code or blade files, you can skip this step.*
+
+    If your server restricts `proc_open` (common on HestiaCP / cPanel), use `--no-scripts` to bypass process execution, then run discovery manually:
     ```bash
-    composer install --no-dev --optimize-autoloader
+    composer install --no-dev --no-scripts --optimize-autoloader
+    php artisan package:discover
     ```
 
 4. **Run database migrations**:
@@ -144,21 +148,43 @@ To ensure a smooth update without errors for your users, follow these steps in y
     php artisan up
     ```
 
-## Troubleshooting
+## Managing Dependencies (3 Methods)
 
-### Error: `proc_open` is not available
+If you add new packages via `composer require` locally and need to deploy them to the server:
 
-If you see this error during `composer install` on a restrictive host, use these commands instead:
+### Method 1: On-Server with `--no-scripts` (Recommended)
+This avoids `proc_open` errors while letting Composer handle downloading and autoloading on the server:
+```bash
+composer install --no-dev --no-scripts --optimize-autoloader
+php artisan package:discover
+```
 
-1.  Install packages without running scripts:
-    ```bash
-    composer install --no-dev --no-scripts --optimize-autoloader
-    ```
-2.  Then, manually run package discovery:
-    ```bash
-    php artisan package:discover
-    ```
-    Proceed with the installation as normal.
+### Method 2: Manual `vendor` Upload (From Local Dev / Laragon)
+If you prefer not running Composer on the production server:
+1. Install packages locally: `composer require <package-name>`
+2. Commit and push `composer.json` and `composer.lock` to Git.
+3. Zip your local `vendor` folder (`vendor.zip`).
+4. Upload `vendor.zip` via SFTP / MobaXterm to your project root on the server.
+5. Extract it (replacing the server's `vendor/` directory).
+6. Fix permissions:
+   ```bash
+   chown -R santempougatsa:santempougatsa vendor/
+   ```
+7. Run cache clear:
+   ```bash
+   php artisan optimize:clear
+   ```
+
+### Method 3: Enable `proc_open` in CLI PHP Configuration
+If you want standard `composer install` to run on the server without any extra flags:
+1. Find your CLI `php.ini` path:
+   ```bash
+   php --ini | grep "Loaded Configuration"
+   ```
+   *(e.g., `/etc/php/8.2/cli/php.ini` or `/etc/php/8.3/cli/php.ini`)*
+2. Open that file and find the `disable_functions` line.
+3. Remove `proc_open` from the `disable_functions` list and save.
+4. Now standard `composer install --no-dev --optimize-autoloader` will execute without errors.
 
 ## Email settings
 
