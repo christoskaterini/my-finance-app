@@ -241,13 +241,13 @@ class TransactionController extends Controller
             'transaction_date' => 'required|date',
             'expenses' => 'nullable|array',
             'expenses.*.expense_category_id' => 'required_with:expenses.*.amount|exists:expense_categories,id',
-            'expenses.*.amount' => 'nullable|numeric|gt:0',
+            'expenses.*.amount' => 'nullable|numeric',
             'expenses.*.notes' => 'nullable|string|max:255',
             'income' => 'nullable|array',
             'income.*.shift_id' => 'required_with:income.*.amount|exists:shifts,id',
             'income.*.source_id' => 'required_with:income.*.amount|exists:sources,id',
             'income.*.payment_method_id' => 'required_with:income.*.amount|exists:payment_methods,id',
-            'income.*.amount' => 'nullable|numeric|gt:0',
+            'income.*.amount' => 'nullable|numeric',
         ]);
 
         $user_id = Auth::id();
@@ -255,7 +255,7 @@ class TransactionController extends Controller
 
         if (!empty($validated['expenses'])) {
             foreach ($validated['expenses'] as $expense) {
-                if (!empty($expense['amount']) && !empty($expense['expense_category_id'])) {
+                if (isset($expense['amount']) && is_numeric($expense['amount']) && (float)$expense['amount'] != 0 && !empty($expense['expense_category_id'])) {
                     Transaction::create([
                         'user_id' => $user_id,
                         'store_id' => $validated['store_id'],
@@ -272,8 +272,17 @@ class TransactionController extends Controller
 
         if (!empty($validated['income'])) {
             foreach ($validated['income'] as $income) {
-                if (!empty($income['amount'])) {
-                    Transaction::create(['user_id' => $user_id, 'store_id' => $validated['store_id'], 'transaction_date' => $validated['transaction_date'], 'type' => 'income', 'shift_id' => $income['shift_id'], 'source_id' => $income['source_id'], 'payment_method_id' => $income['payment_method_id'], 'amount' => $income['amount']]);
+                if (isset($income['amount']) && is_numeric($income['amount']) && (float)$income['amount'] != 0) {
+                    Transaction::create([
+                        'user_id' => $user_id,
+                        'store_id' => $validated['store_id'],
+                        'transaction_date' => $validated['transaction_date'],
+                        'type' => 'income',
+                        'shift_id' => $income['shift_id'],
+                        'source_id' => $income['source_id'],
+                        'payment_method_id' => $income['payment_method_id'],
+                        'amount' => $income['amount']
+                    ]);
                     $transactionCount++;
                 }
             }
@@ -295,13 +304,13 @@ class TransactionController extends Controller
             'records.*.transaction_date' => 'required|date',
             'records.*.expenses' => 'nullable|array',
             'records.*.expenses.*.expense_category_id' => 'required_with:records.*.expenses.*.amount|exists:expense_categories,id',
-            'records.*.expenses.*.amount' => 'nullable|numeric|gt:0',
+            'records.*.expenses.*.amount' => 'nullable|numeric',
             'records.*.expenses.*.notes' => 'nullable|string|max:255',
             'records.*.income' => 'nullable|array',
             'records.*.income.*.shift_id' => 'required_with:records.*.income.*.amount|exists:shifts,id',
             'records.*.income.*.source_id' => 'required_with:records.*.income.*.amount|exists:sources,id',
             'records.*.income.*.payment_method_id' => 'required_with:records.*.income.*.amount|exists:payment_methods,id',
-            'records.*.income.*.amount' => 'nullable|numeric|gt:0',
+            'records.*.income.*.amount' => 'nullable|numeric',
         ]);
 
         $user_id = Auth::id();
@@ -312,7 +321,7 @@ class TransactionController extends Controller
 
             if (!empty($record['expenses'])) {
                 foreach ($record['expenses'] as $expense) {
-                    if (!empty($expense['amount']) && !empty($expense['expense_category_id'])) {
+                    if (isset($expense['amount']) && is_numeric($expense['amount']) && (float)$expense['amount'] != 0 && !empty($expense['expense_category_id'])) {
                         Transaction::create([
                             'user_id' => $user_id,
                             'store_id' => $validated['store_id'],
@@ -329,7 +338,7 @@ class TransactionController extends Controller
 
             if (!empty($record['income'])) {
                 foreach ($record['income'] as $income) {
-                    if (!empty($income['amount'])) {
+                    if (isset($income['amount']) && is_numeric($income['amount']) && (float)$income['amount'] != 0) {
                         Transaction::create([
                             'user_id' => $user_id,
                             'store_id' => $validated['store_id'],
@@ -375,13 +384,23 @@ class TransactionController extends Controller
             'store_id' => 'required|exists:stores,id',
             'transaction_date' => 'required|date',
             'type' => 'required|in:income,expense',
-            'amount' => 'required|numeric|gt:0',
-            'expense_category_id' => 'required_if:type,expense|exists:expense_categories,id',
-            'shift_id' => 'required_if:type,income|exists:shifts,id',
-            'source_id' => 'required_if:type,income|exists:sources,id',
-            'payment_method_id' => 'required_if:type,income|exists:payment_methods,id',
+            'amount' => 'required|numeric|not_in:0',
+            'expense_category_id' => 'required_if:type,expense|nullable|exists:expense_categories,id',
+            'shift_id' => 'required_if:type,income|nullable|exists:shifts,id',
+            'source_id' => 'required_if:type,income|nullable|exists:sources,id',
+            'payment_method_id' => 'required_if:type,income|nullable|exists:payment_methods,id',
             'notes' => 'nullable|string|max:255',
+        ], [
+            'amount.not_in' => __('The amount cannot be zero.'),
         ]);
+
+        if ($validated['type'] === 'income') {
+            $validated['expense_category_id'] = null;
+        } else {
+            $validated['shift_id'] = null;
+            $validated['source_id'] = null;
+            $validated['payment_method_id'] = null;
+        }
 
         $transaction->update($validated);
 
