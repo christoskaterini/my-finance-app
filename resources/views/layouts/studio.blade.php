@@ -13,9 +13,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-dark-theme" disabled>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-dark-theme"
+        disabled>
     <style>
-        html, body {
+        html,
+        body {
             overflow-x: hidden;
             width: 100%;
         }
@@ -146,17 +148,17 @@
         }
 
         .transactions-table th.col-date,
-        .transactions-table td[data-label="{{__('Date')}}"] {
+        .transactions-table td[data-label="{{ __('Date') }}"] {
             width: 145px;
         }
 
         .transactions-table th.col-store,
-        .transactions-table td[data-label="{{__('Store')}}"] {
+        .transactions-table td[data-label="{{ __('Store') }}"] {
             width: 150px;
         }
 
         .transactions-table th.col-type,
-        .transactions-table td[data-label="{{__('Type')}}"] {
+        .transactions-table td[data-label="{{ __('Type') }}"] {
             width: 100px;
         }
 
@@ -167,7 +169,7 @@
         }
 
         .transactions-table th.col-actions,
-        .transactions-table td[data-label="{{__('Actions')}}"] {
+        .transactions-table td[data-label="{{ __('Actions') }}"] {
             width: 120px;
         }
 
@@ -299,16 +301,12 @@
         [data-bs-theme="light"] {
             /* Main page background - The lightest gray */
             --bs-body-bg: #edf0f3;
-
             /* Cards, Modals, Sidebar, Top bar - The mid-tone gray */
             --bs-tertiary-bg: #e9ecef;
-
             /* Card Headers - The darkest gray for contrast */
             --bs-secondary-bg: #dee2e6;
-
             /* Main text color */
             --bs-body-color: #212529;
-
             /* Border color */
             --bs-border-color: #ced4da;
         }
@@ -336,88 +334,125 @@
 
 <body>
     {{-- Toast Notification for Success Messages --}}
-    <div class="toast-container position-fixed top-0 end-0 p-3" id="main-toast-container" style="z-index: 1100; pointer-events: none;">
-        @if(session('success'))
-        <div id="successToast" class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="pointer-events: auto;">
-            <div class="d-flex">
-                <div class="toast-body">{{ session('success') }}</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="main-toast-container"
+        style="z-index: 1100; pointer-events: none;">
+        @if (session('success'))
+            <div id="successToast" class="toast align-items-center text-bg-success border-0 show" role="alert"
+                aria-live="assertive" aria-atomic="true" style="pointer-events: auto;">
+                <div class="d-flex">
+                    <div class="toast-body">{{ session('success') }}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
             </div>
-        </div>
         @endif
     </div>
 
     <aside class="sidebar">
         <div>
             <a href="/" class="sidebar-brand d-flex flex-column align-items-center">
-                @if($app_logo)
-                {{-- Changed margin from right (me-2) to bottom (mb-2) --}}
-                <img src="{{ asset('storage/' . $app_logo) }}" alt="Logo" height="60" class="mb-2">
+                @if ($app_logo)
+                    {{-- Changed margin from right (me-2) to bottom (mb-2) --}}
+                    <img src="{{ asset('storage/' . $app_logo) }}" alt="Logo" height="60" class="mb-2">
                 @endif
                 <span>{{ $app_name }}</span>
             </a>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                        <i class="bi bi-grid-1x2-fill me-2"></i> <span>{{__('Dashboard')}}</span>
+                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"
+                        href="{{ route('dashboard') }}">
+                        <i class="bi bi-grid-1x2-fill me-2"></i> <span>{{ __('Dashboard') }}</span>
                     </a>
                 </li>
                 <li class="nav-item mt-2">
-                    <a class="nav-link {{ request()->routeIs('transactions.index') ? 'active' : '' }}" href="{{ route('transactions.index') }}">
-                        <i class="bi bi-wallet2 me-2"></i> <span>{{__('Transactions')}}</span>
+                    <a class="nav-link {{ request()->routeIs('transactions.index') ? 'active' : '' }}"
+                        href="{{ route('transactions.index') }}">
+                        <i class="bi bi-wallet2 me-2"></i> <span>{{ __('Transactions') }}</span>
                     </a>
                 </li>
                 {{-- New Reports Accordion Menu --}}
                 <li class="nav-item mt-2">
-                    <a class="nav-link d-flex justify-content-between {{ request()->routeIs('reports.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#reports-submenu" role="button" aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
-                        <span><i class="bi bi-pie-chart-fill me-2"></i> <span>{{__('Reports')}}</span></span>
+                    <a class="nav-link d-flex justify-content-between {{ request()->routeIs('reports.*') ? 'active' : '' }}"
+                        data-bs-toggle="collapse" href="#reports-submenu" role="button"
+                        aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
+                        <span><i class="bi bi-pie-chart-fill me-2"></i> <span>{{ __('Reports') }}</span></span>
                         <i class="bi bi-chevron-right toggle-icon"></i>
                     </a>
-                    <div class="collapse settings-submenu {{ request()->routeIs('reports.*') ? 'show' : '' }}" id="reports-submenu">
+                    <div class="collapse settings-submenu {{ request()->routeIs('reports.*') ? 'show' : '' }}"
+                        id="reports-submenu">
                         <ul class="nav flex-column">
                             {{-- Link to the Overview page (formerly Home) --}}
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->is('reports') && request()->query('view', 'home') == 'home' ? 'active' : '' }}" href="{{ route('reports.index', ['view' => 'home']) }}"><span>{{__('Overview')}}</span></a>
+                                <a class="nav-link {{ request()->is('reports') && request()->query('view', 'home') == 'home' ? 'active' : '' }}"
+                                    href="{{ route('reports.index', ['view' => 'home']) }}"><span>{{ __('Overview') }}</span></a>
                             </li>
                             {{-- Link to the Monthly Sums page --}}
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->query('view') == 'monthly_sums' ? 'active' : '' }}" href="{{ route('reports.index', ['view' => 'monthly_sums']) }}"><span>{{__('Monthly Sums')}}</span></a>
+                                <a class="nav-link {{ request()->query('view') == 'monthly_sums' ? 'active' : '' }}"
+                                    href="{{ route('reports.index', ['view' => 'monthly_sums']) }}"><span>{{ __('Monthly Sums') }}</span></a>
                             </li>
                             {{-- Link to the Category Analysis page --}}
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->query('view') == 'category_analysis' ? 'active' : '' }}" href="{{ route('reports.index', ['view' => 'category_analysis']) }}"><span>{{__('Category Analysis')}}</span></a>
+                                <a class="nav-link {{ request()->query('view') == 'category_analysis' ? 'active' : '' }}"
+                                    href="{{ route('reports.index', ['view' => 'category_analysis']) }}"><span>{{ __('Category Analysis') }}</span></a>
                             </li>
                             {{-- Link to the Day Income Analysis page --}}
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->query('view') == 'day_income_analysis' ? 'active' : '' }}" href="{{ route('reports.index', ['view' => 'day_income_analysis']) }}"><span>{{__('Day Income Analysis')}}</span></a>
+                                <a class="nav-link {{ request()->query('view') == 'day_income_analysis' ? 'active' : '' }}"
+                                    href="{{ route('reports.index', ['view' => 'day_income_analysis']) }}"><span>{{ __('Day Income Analysis') }}</span></a>
                             </li>
                             {{-- Link to the Charts page --}}
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('reports.charts') ? 'active' : '' }}" href="{{ route('reports.charts') }}"><span>{{__('Charts')}}</span></a>
+                                <a class="nav-link {{ request()->routeIs('reports.charts') ? 'active' : '' }}"
+                                    href="{{ route('reports.charts') }}"><span>{{ __('Charts') }}</span></a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
-                @if(Auth::user()->isAdmin())
-                {{-- ACCORDION MENU SETTINGS --}}
-                <li class="nav-item mt-2">
-                    <a class="nav-link d-flex justify-content-between {{ request()->routeIs('settings.index') ? 'active' : '' }}" data-bs-toggle="collapse" href="#settings-submenu" role="button" aria-expanded="{{ request()->routeIs('settings.index') ? 'true' : 'false' }}">
-                        <span><i class="bi bi-gear-fill me-2"></i> <span>{{__('Settings')}}</span></span>
-                        <i class="bi bi-chevron-right toggle-icon"></i>
-                    </a>
-                    <div class="collapse settings-submenu {{ request()->routeIs('settings.index') ? 'show' : '' }}" id="settings-submenu">
-                        <ul class="nav flex-column">
-                            <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'stores' ? 'active' : '' }}" href="{{ url('/settings?tab=stores') }}"><span>{{__('Stores')}}</span></a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'expense-categories' ? 'active' : '' }}" href="{{ url('/settings?tab=expense-categories') }}"><span>{{__('Expense Categories')}}</span></a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'shifts' ? 'active' : '' }}" href="{{ url('/settings?tab=shifts') }}"><span>{{__('Shifts')}}</span></a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'sources' ? 'active' : '' }}" href="{{ url('/settings?tab=sources') }}"><span>{{__('Sources')}}</span></a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'payment-methods' ? 'active' : '' }}" href="{{ url('/settings?tab=payment-methods') }}"><span>{{__('Payment Methods')}}</span></a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->query('tab') == 'general' ? 'active' : '' }}" href="{{ url('/settings?tab=general') }}"><span>{{__('General')}}</span></a></li>
-                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('settings.users.*') ? 'active' : '' }}" href="{{ route('settings.users.index') }}"><span>{{__('Users')}}</span></a></li>
-                        </ul>
-                    </div>
-                </li>
+                @if (Auth::user()->isAdmin())
+                    {{-- ACCORDION MENU SETTINGS --}}
+                    <li class="nav-item mt-2">
+                        <a class="nav-link d-flex justify-content-between {{ request()->routeIs('settings.index') ? 'active' : '' }}"
+                            data-bs-toggle="collapse" href="#settings-submenu" role="button"
+                            aria-expanded="{{ request()->routeIs('settings.index') ? 'true' : 'false' }}">
+                            <span><i class="bi bi-gear-fill me-2"></i> <span>{{ __('Settings') }}</span></span>
+                            <i class="bi bi-chevron-right toggle-icon"></i>
+                        </a>
+                        <div class="collapse settings-submenu {{ request()->routeIs('settings.index') ? 'show' : '' }}"
+                            id="settings-submenu">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->query('tab') == 'stores' ? 'active' : '' }}"
+                                        href="{{ url('/settings?tab=stores') }}"><span>{{ __('Stores') }}</span></a>
+                                </li>
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->query('tab') == 'expense-categories' ? 'active' : '' }}"
+                                        href="{{ url('/settings?tab=expense-categories') }}"><span>{{ __('Expense Categories') }}</span></a>
+                                </li>
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->query('tab') == 'shifts' ? 'active' : '' }}"
+                                        href="{{ url('/settings?tab=shifts') }}"><span>{{ __('Shifts') }}</span></a>
+                                </li>
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->query('tab') == 'sources' ? 'active' : '' }}"
+                                        href="{{ url('/settings?tab=sources') }}"><span>{{ __('Sources') }}</span></a>
+                                </li>
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->query('tab') == 'payment-methods' ? 'active' : '' }}"
+                                        href="{{ url('/settings?tab=payment-methods') }}"><span>{{ __('Payment Methods') }}</span></a>
+                                </li>
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->query('tab') == 'general' ? 'active' : '' }}"
+                                        href="{{ url('/settings?tab=general') }}"><span>{{ __('General') }}</span></a>
+                                </li>
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->routeIs('settings.users.*') ? 'active' : '' }}"
+                                        href="{{ route('settings.users.index') }}"><span>{{ __('Users') }}</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 @endif
             </ul>
         </div>
@@ -430,7 +465,8 @@
 
             <div class="mt-2" style="font-size: 0.8rem;">
                 <small class="text-muted">
-                    by <a href="{{ config('app.creator_url','https://www.cloudorder.gr') }}" target="_blank" class="text-muted text-decoration-none">{{ config('app.creator_name', 'ChristosK.') }}</a>
+                    by <a href="{{ config('app.creator_url', 'https://www.cloudorder.gr') }}" target="_blank"
+                        class="text-muted text-decoration-none">{{ config('app.creator_name', 'ChristosK.') }}</a>
                 </small>
             </div>
         </div>
@@ -443,7 +479,9 @@
             <button class="btn d-lg-none" id="sidebar-toggler"><i class="bi bi-list fs-3"></i></button>
             <h1 class="page-title d-none d-lg-block">@yield('page-title', 'Dashboard')</h1>
             <div class="top-bar-controls">
-                <div class="dropdown"><a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle fs-4 me-2"></i>
+                <div class="dropdown"><a href="#"
+                        class="d-flex align-items-center text-decoration-none dropdown-toggle"
+                        data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle fs-4 me-2"></i>
                         <div>
                             <div class="fw-bold">{{ Auth::user()->name }}</div>
                         </div>
@@ -475,6 +513,26 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/gr.js"></script>
+    <script>
+        document.addEventListener('click', function(event) {
+            const button = event.target.closest('.amount-sign-toggle');
+            if (!button) return;
+
+            const input = button.parentElement.querySelector('input[type="number"]');
+            if (!input || !input.value) return;
+
+            input.value = input.value.startsWith('-') ? input.value.slice(1) : `-${input.value}`;
+            input.dispatchEvent(new Event('input', {
+                bubbles: true
+            }));
+            input.dispatchEvent(new Event('change', {
+                bubbles: true
+            }));
+            input.focus({
+                preventScroll: true
+            });
+        });
+    </script>
     @stack('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -534,15 +592,18 @@
                 wrapper.innerHTML = html.trim();
                 const el = wrapper.firstChild;
                 container.appendChild(el);
-                
-                const bToast = new bootstrap.Toast(el, { delay: 5000 });
+
+                const bToast = new bootstrap.Toast(el, {
+                    delay: 5000
+                });
                 bToast.show();
-                
+
                 el.addEventListener('hidden.bs.toast', () => el.remove());
             };
 
             // --- Flatpickr Global Initialization ---
             const flatpickrDarkTheme = document.getElementById('flatpickr-dark-theme');
+
             function updateFlatpickrTheme() {
                 const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
                 if (isDark) {
@@ -556,17 +617,20 @@
             // Observe theme changes
             const observer = new MutationObserver((mutations) => {
                 mutations.forEach((mutation) => {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+                    if (mutation.type === 'attributes' && mutation.attributeName ===
+                        'data-bs-theme') {
                         updateFlatpickrTheme();
                     }
                 });
             });
-            observer.observe(document.documentElement, { attributes: true });
+            observer.observe(document.documentElement, {
+                attributes: true
+            });
 
             window.initDatePickers = function(container = document) {
                 const appLocale = document.documentElement.lang;
                 const fpLocale = (appLocale === 'el' || appLocale === 'gr') ? 'gr' : 'en';
-                
+
                 const inputs = container.querySelectorAll('input[type="date"], .datepicker');
                 inputs.forEach(el => {
                     // Prevent double initialization
@@ -605,10 +669,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{__('Confirm Action')}}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title">{{ __('Confirm Action') }}</h5><button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">{{__('Are you sure?')}}</div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{__('Cancel')}}</button><button type="button" class="btn btn-danger" id="confirmDeleteButton">{{__('Delete')}}</button></div>
+                <div class="modal-body">{{ __('Are you sure?') }}</div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">{{ __('Cancel') }}</button><button type="button"
+                        class="btn btn-danger" id="confirmDeleteButton">{{ __('Delete') }}</button></div>
             </div>
         </div>
     </div>
