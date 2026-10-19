@@ -646,6 +646,7 @@
 
             const amountSelector = '.amount-input, #amount, [data-field="amount"]';
             let activeInput = null;
+            let pointerStartedOnAmount = false;
 
             function getAmountInputs() {
                 return Array.from(document.querySelectorAll(amountSelector)).filter(input =>
@@ -664,24 +665,11 @@
                 keypad.hidden = true;
                 document.body.classList.remove('ios-amount-keypad-open');
                 document.body.style.removeProperty('--ios-amount-keypad-height');
+                document.documentElement.style.removeProperty('scroll-padding-bottom');
             }
 
             function normalizeAmount(value) {
                 return decimalSeparator === ',' ? value.replace(',', '.') : value;
-            }
-
-            function revealActiveInput() {
-                const inputBottom = activeInput.getBoundingClientRect().bottom;
-                const keypadTop = keypad.getBoundingClientRect().top;
-                const overlap = inputBottom - keypadTop + 12;
-                if (overlap <= 0) return;
-
-                const mainContent = activeInput.closest('.main-content');
-                if (mainContent && mainContent.scrollHeight > mainContent.clientHeight) {
-                    mainContent.scrollTop += overlap;
-                } else {
-                    window.scrollBy(0, overlap);
-                }
             }
 
             function showKeypad(input) {
@@ -691,9 +679,14 @@
                 document.body.classList.add('ios-amount-keypad-open');
 
                 requestAnimationFrame(() => {
-                    if (!activeInput) return;
+                    if (activeInput !== input) return;
                     document.body.style.setProperty('--ios-amount-keypad-height', `${keypad.offsetHeight}px`);
-                    revealActiveInput();
+                    const root = document.documentElement;
+                    root.style.scrollPaddingBottom = `${keypad.offsetHeight + 12}px`;
+                    input.scrollIntoView({
+                        block: 'center',
+                        behavior: 'smooth'
+                    });
                 });
             }
 
@@ -724,11 +717,29 @@
 
             document.addEventListener('focusin', function(event) {
                 if (!event.target.matches(amountSelector)) return;
+                if (keypad.hidden && pointerStartedOnAmount) return;
                 showKeypad(event.target);
             });
 
+            document.addEventListener('pointerdown', function(event) {
+                pointerStartedOnAmount = event.target.matches(amountSelector);
+            }, true);
+
+            document.addEventListener('touchstart', function(event) {
+                pointerStartedOnAmount = event.target.matches(amountSelector);
+            }, {
+                capture: true,
+                passive: true
+            });
+
             document.addEventListener('click', function(event) {
-                if (!activeInput || keypad.contains(event.target) || event.target.matches(amountSelector))
+                if (event.target.matches(amountSelector)) {
+                    pointerStartedOnAmount = false;
+                    showKeypad(event.target);
+                    return;
+                }
+                pointerStartedOnAmount = false;
+                if (!activeInput || keypad.contains(event.target))
                     return;
                 closeKeypad();
             });
