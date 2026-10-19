@@ -676,7 +676,10 @@
                         type: row.dataset.type
                     };
                     row.querySelectorAll('.ss-input').forEach(input => {
-                        data[input.dataset.field] = input.value;
+                        data[input.dataset.field] = input.dataset.field === 'amount' && window
+                            .appDecimalSeparator === ',' ?
+                            input.value.replace(',', '.') :
+                            input.value;
                     });
 
                     try {

@@ -515,15 +515,39 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/gr.js"></script>
     <style>
         .ios-amount-keypad {
+            --ios-keyboard-bg: #d1d3d9;
+            --ios-key-bg: #ffffff;
+            --ios-key-color: #1c1c1e;
+            --ios-key-border: #b7bac1;
             position: fixed;
             z-index: 1080;
             right: 0;
             bottom: 0;
             left: 0;
+            max-height: 55dvh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
             padding: 0.75rem max(0.75rem, env(safe-area-inset-left)) calc(0.75rem + env(safe-area-inset-bottom));
-            background: var(--bs-body-bg, #fff);
-            border-top: 1px solid var(--bs-border-color, #dee2e6);
-            box-shadow: 0 -0.5rem 1.5rem rgb(0 0 0 / 12%);
+            background: var(--ios-keyboard-bg);
+            border-top: 1px solid var(--ios-key-border);
+            box-shadow: 0 -0.5rem 1.5rem rgb(0 0 0 / 18%);
+        }
+
+        [data-bs-theme="dark"] .ios-amount-keypad {
+            --ios-keyboard-bg: #1c1c1e;
+            --ios-key-bg: #3a3a3c;
+            --ios-key-color: #ffffff;
+            --ios-key-border: #4a4a4d;
+        }
+
+        .ios-amount-keypad-open .page-content {
+            padding-bottom: calc(2rem + var(--ios-amount-keypad-height, 18rem)) !important;
+        }
+
+        @media (max-width: 992px) {
+            .ios-amount-keypad-open .page-content {
+                padding-bottom: calc(1rem + var(--ios-amount-keypad-height, 18rem)) !important;
+            }
         }
 
         .ios-amount-keypad[hidden] {
@@ -534,62 +558,133 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 0.5rem;
             max-width: 32rem;
             margin: 0 auto 0.5rem;
         }
 
         .ios-amount-keypad-grid {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 0.4rem;
             max-width: 32rem;
             margin: 0 auto;
         }
 
-        .ios-amount-keypad-key {
+        .ios-amount-keypad-key,
+        .ios-amount-keypad-action {
             min-height: 2.8rem;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             touch-action: manipulation;
+            color: var(--ios-key-color);
+            background-color: var(--ios-key-bg);
+            border: 1px solid var(--ios-key-border);
+            border-radius: 0.35rem;
+            box-shadow: 0 1px 0 rgb(0 0 0 / 18%);
+        }
+
+        .ios-amount-keypad-key:hover,
+        .ios-amount-keypad-key:active,
+        .ios-amount-keypad-action:hover,
+        .ios-amount-keypad-action:active {
+            color: var(--ios-key-color);
+            background-color: color-mix(in srgb, var(--ios-key-bg) 88%, var(--ios-key-color));
+        }
+
+        .ios-amount-keypad-action {
+            min-height: 2.4rem;
+            min-width: 3.25rem;
+            padding-inline: 0.5rem;
+            border: 0;
+            box-shadow: none;
+        }
+
+        .ios-amount-keypad-next {
+            color: #007aff;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        [data-bs-theme="dark"] .ios-amount-keypad-next {
+            color: #0a84ff;
         }
     </style>
     <div class="ios-amount-keypad" id="ios-amount-keypad" hidden role="group"
-        aria-label="{{ __('Amount keypad') }}">
+        aria-label="{{ __('Amount keypad') }}" data-decimal-separator="{{ settings('app_number_format', ',') }}">
         <div class="ios-amount-keypad-header">
-            <span>{{ __('Amount') }}</span>
-            <button type="button" class="btn btn-primary btn-sm"
-                data-amount-key="done">{{ __('Done') }}</button>
+            <button type="button" class="btn ios-amount-keypad-action" data-amount-key="minus"
+                aria-label="{{ __('Minus') }}">−</button>
+            <button type="button" class="btn ios-amount-keypad-action ios-amount-keypad-next"
+                data-amount-key="next">{{ __('Next') }}</button>
         </div>
         <div class="ios-amount-keypad-grid">
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="1">1</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="2">2</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="3">3</button>
-            <button type="button" class="btn btn-outline-secondary ios-amount-keypad-key" data-amount-key="minus"
-                aria-label="{{ __('Minus') }}">−</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="4">4</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="5">5</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="6">6</button>
-            <button type="button" class="btn btn-outline-secondary ios-amount-keypad-key"
-                data-amount-key="backspace" aria-label="{{ __('Backspace') }}">⌫</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="7">7</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="8">8</button>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="9">9</button>
-            <button type="button" class="btn btn-outline-secondary ios-amount-keypad-key" data-amount-key="decimal"
-                aria-label="{{ __('Decimal point') }}">.</button>
-            <span aria-hidden="true"></span>
-            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="0">0</button>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="1">1</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="2">2</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="3">3</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="4">4</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="5">5</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="6">6</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="7">7</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="8">8</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="9">9</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="decimal"
+                aria-label="{{ __('Decimal point') }}">{{ settings('app_number_format', ',') }}</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="0">0</button>
+            <button type="button" class="btn ios-amount-keypad-key" data-amount-key="backspace"
+                aria-label="{{ __('Backspace') }}">⌫</button>
         </div>
     </div>
     <script>
         (function() {
+            const keypad = document.getElementById('ios-amount-keypad');
+            const decimalSeparator = keypad.dataset.decimalSeparator || '.';
+            window.appDecimalSeparator = decimalSeparator;
             const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
             if (!isIOS) return;
 
             const amountSelector = '.amount-input, #amount, [data-field="amount"]';
-            const keypad = document.getElementById('ios-amount-keypad');
             let activeInput = null;
+
+            function getAmountInputs() {
+                return Array.from(document.querySelectorAll(amountSelector)).filter(input =>
+                    !input.disabled && input.getClientRects().length > 0
+                );
+            }
+
+            function closeKeypad() {
+                if (activeInput) {
+                    activeInput.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
+                    activeInput.blur();
+                }
+                activeInput = null;
+                keypad.hidden = true;
+                document.body.classList.remove('ios-amount-keypad-open');
+                document.body.style.removeProperty('--ios-amount-keypad-height');
+            }
+
+            function normalizeAmount(value) {
+                return decimalSeparator === ',' ? value.replace(',', '.') : value;
+            }
+
+            function showKeypad(input) {
+                configureAmountInput(input);
+                activeInput = input;
+                keypad.hidden = false;
+                document.body.classList.add('ios-amount-keypad-open');
+
+                requestAnimationFrame(() => {
+                    if (!activeInput) return;
+                    document.body.style.setProperty('--ios-amount-keypad-height', `${keypad.offsetHeight}px`);
+                    activeInput.scrollIntoView({
+                        block: 'start',
+                        behavior: 'smooth'
+                    });
+                });
+            }
 
             function configureAmountInput(input) {
                 if (!input.matches(amountSelector)) return;
@@ -597,6 +692,9 @@
                 input.inputMode = 'none';
                 input.autocomplete = 'off';
                 input.spellcheck = false;
+                if (decimalSeparator === ',' && input.value.includes('.')) {
+                    input.value = input.value.replace('.', ',');
+                }
             }
 
             document.querySelectorAll(amountSelector).forEach(configureAmountInput);
@@ -615,45 +713,40 @@
 
             document.addEventListener('focusin', function(event) {
                 if (!event.target.matches(amountSelector)) return;
-                configureAmountInput(event.target);
-                activeInput = event.target;
-                keypad.hidden = false;
-                activeInput.scrollIntoView({
-                    block: 'center',
-                    behavior: 'smooth'
-                });
+                showKeypad(event.target);
             });
 
-            document.addEventListener('focusout', function(event) {
-                if (event.target !== activeInput || keypad.contains(event.relatedTarget)) return;
-                keypad.hidden = true;
-                activeInput = null;
-            });
-
-            document.addEventListener('pointerdown', function(event) {
-                if (keypad.contains(event.target)) {
-                    event.preventDefault();
+            document.addEventListener('click', function(event) {
+                if (!activeInput || keypad.contains(event.target) || event.target.matches(amountSelector))
                     return;
-                }
-                if (activeInput && event.target !== activeInput) {
-                    keypad.hidden = true;
-                    activeInput.blur();
-                    activeInput = null;
-                }
+                closeKeypad();
             });
+
+            keypad.addEventListener('pointerdown', function(event) {
+                if (event.target.closest('[data-amount-key]')) event.preventDefault();
+            });
+
+            document.addEventListener('submit', function(event) {
+                event.target.querySelectorAll(amountSelector).forEach(input => {
+                    input.value = normalizeAmount(input.value);
+                });
+            }, true);
 
             keypad.addEventListener('click', function(event) {
                 const button = event.target.closest('[data-amount-key]');
                 if (!button || !activeInput) return;
 
                 const key = button.dataset.amountKey;
-                if (key === 'done') {
-                    activeInput.dispatchEvent(new Event('change', {
-                        bubbles: true
-                    }));
-                    activeInput.blur();
-                    activeInput = null;
-                    keypad.hidden = true;
+                if (key === 'next') {
+                    const amountInputs = getAmountInputs();
+                    const nextInput = amountInputs[amountInputs.indexOf(activeInput) + 1];
+                    if (nextInput) {
+                        nextInput.focus({
+                            preventScroll: true
+                        });
+                    } else {
+                        closeKeypad();
+                    }
                     return;
                 }
 
@@ -673,8 +766,8 @@
                     }
                     activeInput.setSelectionRange(start, end);
                 } else if (key === 'decimal') {
-                    if (value.includes('.')) return;
-                    activeInput.setRangeText('.', start, end, 'end');
+                    if (value.includes('.') || value.includes(',')) return;
+                    activeInput.setRangeText(decimalSeparator, start, end, 'end');
                 } else if (key === 'backspace') {
                     if (start === end && start > 0) start--;
                     activeInput.setRangeText('', start, end, 'start');

@@ -231,14 +231,15 @@
             function updateTotals() {
                 let expenseTotal = 0;
                 document.querySelectorAll('#expense-lines-container .amount-input').forEach(input => {
-                    expenseTotal += parseFloat(input.value) || 0;
+                    expenseTotal += parseFloat(input.value.replace(',', '.')) || 0;
                 });
-                expenseTotalEl.textContent = expenseTotal.toFixed(2);
+                expenseTotalEl.textContent = expenseTotal.toFixed(2).replace('.', window.appDecimalSeparator ||
+                '.');
                 let incomeTotal = 0;
                 document.querySelectorAll('#income-lines-container .amount-input').forEach(input => {
-                    incomeTotal += parseFloat(input.value) || 0;
+                    incomeTotal += parseFloat(input.value.replace(',', '.')) || 0;
                 });
-                incomeTotalEl.textContent = incomeTotal.toFixed(2);
+                incomeTotalEl.textContent = incomeTotal.toFixed(2).replace('.', window.appDecimalSeparator || '.');
             }
 
             addRecordForm.addEventListener('input', function(e) {

@@ -277,15 +277,17 @@
             function updateTotals(block) {
                 let expenseTotal = 0;
                 block.querySelectorAll('.expense-line .amount-input').forEach(input => {
-                    expenseTotal += parseFloat(input.value) || 0;
+                    expenseTotal += parseFloat(input.value.replace(',', '.')) || 0;
                 });
-                block.querySelector('.expense-total').textContent = expenseTotal.toFixed(2);
+                block.querySelector('.expense-total').textContent = expenseTotal.toFixed(2).replace('.', window
+                    .appDecimalSeparator || '.');
 
                 let incomeTotal = 0;
                 block.querySelectorAll('.income-line .amount-input').forEach(input => {
-                    incomeTotal += parseFloat(input.value) || 0;
+                    incomeTotal += parseFloat(input.value.replace(',', '.')) || 0;
                 });
-                block.querySelector('.income-total').textContent = incomeTotal.toFixed(2);
+                block.querySelector('.income-total').textContent = incomeTotal.toFixed(2).replace('.', window
+                    .appDecimalSeparator || '.');
             }
 
             // --- GLOBAL EVENT LISTENERS ---
@@ -371,7 +373,7 @@
                                 el.type !== 'hidden' &&
                                 !el.classList.contains(
                                     'flatpickr-input'
-                                    ); // We only want the visible alt-input for flatpickr
+                                ); // We only want the visible alt-input for flatpickr
                         });
 
                     const index = focusable.indexOf(target);
