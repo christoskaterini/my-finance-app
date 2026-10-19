@@ -670,6 +670,20 @@
                 return decimalSeparator === ',' ? value.replace(',', '.') : value;
             }
 
+            function revealActiveInput() {
+                const inputBottom = activeInput.getBoundingClientRect().bottom;
+                const keypadTop = keypad.getBoundingClientRect().top;
+                const overlap = inputBottom - keypadTop + 12;
+                if (overlap <= 0) return;
+
+                const mainContent = activeInput.closest('.main-content');
+                if (mainContent && mainContent.scrollHeight > mainContent.clientHeight) {
+                    mainContent.scrollTop += overlap;
+                } else {
+                    window.scrollBy(0, overlap);
+                }
+            }
+
             function showKeypad(input) {
                 configureAmountInput(input);
                 activeInput = input;
@@ -679,10 +693,7 @@
                 requestAnimationFrame(() => {
                     if (!activeInput) return;
                     document.body.style.setProperty('--ios-amount-keypad-height', `${keypad.offsetHeight}px`);
-                    activeInput.scrollIntoView({
-                        block: 'start',
-                        behavior: 'smooth'
-                    });
+                    revealActiveInput();
                 });
             }
 
