@@ -246,10 +246,7 @@
                     <input type="text" class="form-control notes-input" name="records[${blockIndex}][expenses][${expenseIndex}][notes]" placeholder="${labels.notes}">
                 </div>
                 <div class="col-sm-3 col-5">
-                    <div class="input-group">
-                        <input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="records[${blockIndex}][expenses][${expenseIndex}][amount]" placeholder="${labels.amount}">
-                        <button type="button" class="btn btn-outline-secondary amount-sign-toggle" aria-label="{{ __('Toggle sign') }}" title="{{ __('Toggle sign') }}">±</button>
-                    </div>
+                    <input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="records[${blockIndex}][expenses][${expenseIndex}][amount]" placeholder="${labels.amount}">
                 </div>
             `;
 
@@ -272,10 +269,7 @@
                         </div>
                     </div>
                     <div class="col-5">
-                        <div class="input-group">
-                            <input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="records[${blockIndex}][income][${incomeIndex}][amount]" placeholder="${labels.amount}">
-                            <button type="button" class="btn btn-outline-secondary amount-sign-toggle" aria-label="{{ __('Toggle sign') }}" title="{{ __('Toggle sign') }}">±</button>
-                        </div>
+                        <input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="records[${blockIndex}][income][${incomeIndex}][amount]" placeholder="${labels.amount}">
                     </div>
                 </div>`;
             }
@@ -376,7 +370,8 @@
                                 el.offsetParent !== null &&
                                 el.type !== 'hidden' &&
                                 !el.classList.contains(
-                                'flatpickr-input'); // We only want the visible alt-input for flatpickr
+                                    'flatpickr-input'
+                                    ); // We only want the visible alt-input for flatpickr
                         });
 
                     const index = focusable.indexOf(target);

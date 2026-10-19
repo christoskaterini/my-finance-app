@@ -113,16 +113,6 @@
             }
         }
 
-        .spreadsheet-active .transactions-table .input-group {
-            flex-wrap: nowrap;
-        }
-
-        .spreadsheet-active .transactions-table .input-group>.ss-input {
-            flex: 1 1 auto;
-            width: 1%;
-            min-width: 0;
-        }
-
         /* Mobile Spreadsheet Adjustments (Card Mode) - Compact Single Line */
         @media (max-width: 575px) {
             .spreadsheet-active .transactions-table {
@@ -789,7 +779,7 @@
                 if (data.type === 'expense') {
                     let catOptions = refData.expenseCategories.map(c =>
                         `<option value="${c.id}" ${c.id == data.category_id ? 'selected' : ''}>${c.name}</option>`
-                        ).join('');
+                    ).join('');
                     detailsCell.innerHTML = `
                     <div class="d-flex flex-column gap-1">
                         <select class="form-select form-select-sm ss-input" data-field="expense_category_id" data-original-label="${detailsOriginalLabel}">${catOptions}</select>
@@ -802,10 +792,10 @@
                         .join('');
                     let sourceOptions = refData.sources.map(s =>
                         `<option value="${s.id}" ${s.id == data.source_id ? 'selected' : ''}>${s.name}</option>`
-                        ).join('');
+                    ).join('');
                     let pmOptions = refData.paymentMethods.map(p =>
                         `<option value="${p.id}" ${p.id == data.payment_method_id ? 'selected' : ''}>${p.name}</option>`
-                        ).join('');
+                    ).join('');
 
                     detailsCell.innerHTML = `
                     <div class="d-flex flex-column gap-1">
@@ -817,7 +807,7 @@
                 }
 
                 amountCell.innerHTML =
-                    `<div class="input-group input-group-sm"><input type="number" inputmode="decimal" step="0.01" class="form-control text-end ss-input" data-field="amount" data-original-label="${amountOriginalLabel}" value="${data.amount}"><button type="button" class="btn btn-outline-secondary amount-sign-toggle" aria-label="{{ __('Toggle sign') }}" title="{{ __('Toggle sign') }}">±</button></div>`;
+                    `<input type="number" inputmode="decimal" step="0.01" class="form-control form-control-sm text-end ss-input" data-field="amount" data-original-label="${amountOriginalLabel}" value="${data.amount}">`;
 
                 row.querySelectorAll('.ss-input').forEach(input => {
                     // Store initial value for dirty checking

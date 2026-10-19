@@ -43,12 +43,8 @@
 
                         <div class="mb-3">
                             <label for="amount" class="form-label">{{ __('Amount') }}</label>
-                            <div class="input-group">
-                                <input type="number" inputmode="decimal" step="0.01" class="form-control" id="amount"
-                                    name="amount" value="{{ old('amount', $transaction->amount) }}" required>
-                                <button type="button" class="btn btn-outline-secondary amount-sign-toggle"
-                                    aria-label="{{ __('Toggle sign') }}" title="{{ __('Toggle sign') }}">±</button>
-                            </div>
+                            <input type="number" inputmode="decimal" step="0.01" class="form-control" id="amount"
+                                name="amount" value="{{ old('amount', $transaction->amount) }}" required>
                         </div>
 
                         <div id="expense-fields"

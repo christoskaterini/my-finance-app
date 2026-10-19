@@ -205,10 +205,7 @@
                 <input type="text" class="form-control notes-input" name="expenses[${index}][notes]" placeholder="{{ __('Notes') }}">
             </div>
             <div class="col-sm-3 col-5">
-                <div class="input-group">
-                    <input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="expenses[${index}][amount]" placeholder="{{ __('Amount') }}">
-                    <button type="button" class="btn btn-outline-secondary amount-sign-toggle" aria-label="{{ __('Toggle sign') }}" title="{{ __('Toggle sign') }}">±</button>
-                </div>
+                <input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="expenses[${index}][amount]" placeholder="{{ __('Amount') }}">
             </div>
             `;
 
@@ -219,7 +216,7 @@
             }
 
             function createIncomeLine(index, shift, source, payment) {
-                return `<div class="row g-2 align-items-center mb-1"><input type="hidden" name="income[${index}][shift_id]" value="${shift.id}"><input type="hidden" name="income[${index}][source_id]" value="${source.id}"><input type="hidden" name="income[${index}][payment_method_id]" value="${payment.id}"><div class="col-7"><div class="row g-1"><div class="col-6"><input type="text" class="form-control-plaintext py-0 small" value="${source.name}" readonly tabindex="-1"></div><div class="col-6"><input type="text" class="form-control-plaintext py-0 small" value="${payment.name}" readonly tabindex="-1"></div></div></div><div class="col-5"><div class="input-group"><input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="income[${index}][amount]" placeholder="{{ __('Amount') }}"><button type="button" class="btn btn-outline-secondary amount-sign-toggle" aria-label="{{ __('Toggle sign') }}" title="{{ __('Toggle sign') }}">±</button></div></div></div>`;
+                return `<div class="row g-2 align-items-center mb-1"><input type="hidden" name="income[${index}][shift_id]" value="${shift.id}"><input type="hidden" name="income[${index}][source_id]" value="${source.id}"><input type="hidden" name="income[${index}][payment_method_id]" value="${payment.id}"><div class="col-7"><div class="row g-1"><div class="col-6"><input type="text" class="form-control-plaintext py-0 small" value="${source.name}" readonly tabindex="-1"></div><div class="col-6"><input type="text" class="form-control-plaintext py-0 small" value="${payment.name}" readonly tabindex="-1"></div></div></div><div class="col-5"><input type="number" inputmode="decimal" step="0.01" class="form-control fw-bold amount-input" name="income[${index}][amount]" placeholder="{{ __('Amount') }}"></div></div>`;
             }
 
             // --- EVENT LISTENERS ---

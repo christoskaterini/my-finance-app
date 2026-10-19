@@ -513,25 +513,180 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/gr.js"></script>
+    <style>
+        .ios-amount-keypad {
+            position: fixed;
+            z-index: 1080;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: 0.75rem max(0.75rem, env(safe-area-inset-left)) calc(0.75rem + env(safe-area-inset-bottom));
+            background: var(--bs-body-bg, #fff);
+            border-top: 1px solid var(--bs-border-color, #dee2e6);
+            box-shadow: 0 -0.5rem 1.5rem rgb(0 0 0 / 12%);
+        }
+
+        .ios-amount-keypad[hidden] {
+            display: none !important;
+        }
+
+        .ios-amount-keypad-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 32rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        .ios-amount-keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.4rem;
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+
+        .ios-amount-keypad-key {
+            min-height: 2.8rem;
+            font-size: 1.2rem;
+            touch-action: manipulation;
+        }
+    </style>
+    <div class="ios-amount-keypad" id="ios-amount-keypad" hidden role="group"
+        aria-label="{{ __('Amount keypad') }}">
+        <div class="ios-amount-keypad-header">
+            <span>{{ __('Amount') }}</span>
+            <button type="button" class="btn btn-primary btn-sm"
+                data-amount-key="done">{{ __('Done') }}</button>
+        </div>
+        <div class="ios-amount-keypad-grid">
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="1">1</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="2">2</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="3">3</button>
+            <button type="button" class="btn btn-outline-secondary ios-amount-keypad-key" data-amount-key="minus"
+                aria-label="{{ __('Minus') }}">−</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="4">4</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="5">5</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="6">6</button>
+            <button type="button" class="btn btn-outline-secondary ios-amount-keypad-key"
+                data-amount-key="backspace" aria-label="{{ __('Backspace') }}">⌫</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="7">7</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="8">8</button>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="9">9</button>
+            <button type="button" class="btn btn-outline-secondary ios-amount-keypad-key" data-amount-key="decimal"
+                aria-label="{{ __('Decimal point') }}">.</button>
+            <span aria-hidden="true"></span>
+            <button type="button" class="btn btn-light ios-amount-keypad-key" data-amount-key="0">0</button>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </div>
+    </div>
     <script>
-        document.addEventListener('click', function(event) {
-            const button = event.target.closest('.amount-sign-toggle');
-            if (!button) return;
+        (function() {
+            const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            if (!isIOS) return;
 
-            const input = button.parentElement.querySelector('input[type="number"]');
-            if (!input || !input.value) return;
+            const amountSelector = '.amount-input, #amount, [data-field="amount"]';
+            const keypad = document.getElementById('ios-amount-keypad');
+            let activeInput = null;
 
-            input.value = input.value.startsWith('-') ? input.value.slice(1) : `-${input.value}`;
-            input.dispatchEvent(new Event('input', {
-                bubbles: true
-            }));
-            input.dispatchEvent(new Event('change', {
-                bubbles: true
-            }));
-            input.focus({
-                preventScroll: true
+            function configureAmountInput(input) {
+                if (!input.matches(amountSelector)) return;
+                input.type = 'text';
+                input.inputMode = 'none';
+                input.autocomplete = 'off';
+                input.spellcheck = false;
+            }
+
+            document.querySelectorAll(amountSelector).forEach(configureAmountInput);
+
+            const amountInputObserver = new MutationObserver(mutations => {
+                mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
+                    if (node.nodeType !== Node.ELEMENT_NODE) return;
+                    configureAmountInput(node);
+                    node.querySelectorAll(amountSelector).forEach(configureAmountInput);
+                }));
             });
-        });
+            amountInputObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            document.addEventListener('focusin', function(event) {
+                if (!event.target.matches(amountSelector)) return;
+                configureAmountInput(event.target);
+                activeInput = event.target;
+                keypad.hidden = false;
+                activeInput.scrollIntoView({
+                    block: 'center',
+                    behavior: 'smooth'
+                });
+            });
+
+            document.addEventListener('focusout', function(event) {
+                if (event.target !== activeInput || keypad.contains(event.relatedTarget)) return;
+                keypad.hidden = true;
+                activeInput = null;
+            });
+
+            document.addEventListener('pointerdown', function(event) {
+                if (keypad.contains(event.target)) {
+                    event.preventDefault();
+                    return;
+                }
+                if (activeInput && event.target !== activeInput) {
+                    keypad.hidden = true;
+                    activeInput.blur();
+                    activeInput = null;
+                }
+            });
+
+            keypad.addEventListener('click', function(event) {
+                const button = event.target.closest('[data-amount-key]');
+                if (!button || !activeInput) return;
+
+                const key = button.dataset.amountKey;
+                if (key === 'done') {
+                    activeInput.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
+                    activeInput.blur();
+                    activeInput = null;
+                    keypad.hidden = true;
+                    return;
+                }
+
+                const value = activeInput.value;
+                let start = activeInput.selectionStart ?? value.length;
+                let end = activeInput.selectionEnd ?? value.length;
+
+                if (key === 'minus') {
+                    if (value.startsWith('-')) {
+                        activeInput.value = value.slice(1);
+                        start = Math.max(0, start - 1);
+                        end = Math.max(0, end - 1);
+                    } else {
+                        activeInput.value = `-${value}`;
+                        start++;
+                        end++;
+                    }
+                    activeInput.setSelectionRange(start, end);
+                } else if (key === 'decimal') {
+                    if (value.includes('.')) return;
+                    activeInput.setRangeText('.', start, end, 'end');
+                } else if (key === 'backspace') {
+                    if (start === end && start > 0) start--;
+                    activeInput.setRangeText('', start, end, 'start');
+                } else {
+                    activeInput.setRangeText(key, start, end, 'end');
+                }
+
+                activeInput.dispatchEvent(new Event('input', {
+                    bubbles: true
+                }));
+            });
+        })();
     </script>
     @stack('scripts')
     <script>
