@@ -527,7 +527,7 @@
             max-height: 55dvh;
             overflow-y: auto;
             overscroll-behavior: contain;
-            padding: 0.75rem max(0.75rem, env(safe-area-inset-left)) calc(0.75rem + env(safe-area-inset-bottom));
+            padding: 0.75rem max(0.75rem, env(safe-area-inset-left)) calc(1.5rem + env(safe-area-inset-bottom));
             background: var(--ios-keyboard-bg);
             border-top: 1px solid var(--ios-key-border);
             box-shadow: 0 -0.5rem 1.5rem rgb(0 0 0 / 18%);
