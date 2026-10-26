@@ -51,7 +51,10 @@ Log into your server via SSH.
 
 4.  **Set Server Permissions.**
     ```bash
-    chmod -R 775 storage bootstrap/cache
+    find storage bootstrap/cache -type d -exec chmod 775 {} +
+    ```
+    ```bash
+    find storage bootstrap/cache -type f -exec chmod 664 {} +
     ```
 
 ### Step 2: Configure the Web Server
@@ -92,13 +95,31 @@ Your application is now fully installed and secured.
 
 ## Local Development Setup
 
-1.  **Clone the repository:** `git clone https://github.com/christoskaterini/my-finance-app.git`
-2.  **Navigate into the project:** `cd my-finance-app`
-3.  **Install all dependencies (including dev tools):** `composer install`
-4.  **Create your `.env` file:** `cp .env.example .env`
-5.  **Generate an application key:** `php artisan key:generate`
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/christoskaterini/my-finance-app.git
+    ```
+2.  **Navigate into the project:**
+    ```bash
+    cd my-finance-app
+    ```
+3.  **Install all dependencies (including dev tools):**
+    ```bash
+    composer install
+    ```
+4.  **Create your `.env` file:**
+    ```bash
+    cp .env.example .env
+    ```
+5.  **Generate an application key:**
+    ```bash
+    php artisan key:generate
+    ```
 6.  **Configure your `.env` file** with your local database details.
-7.  **Run migrations and seeders:** `php artisan migrate --seed`
+7.  **Run migrations and seeders:**
+    ```bash
+    php artisan migrate --seed
+    ```
     -   This will build the database and create a default admin user.
 
 > **Warning:** The seeder creates a user with the email `christoskanotidis@gmail.com` and the password `password`. **Change this password immediately after your first login.**
@@ -109,41 +130,63 @@ Choose either the automated script or the manual commands below. Both methods as
 
 ### Option 1: Update script
 
-Make the script executable once, then run it:
+Run the script with Bash from the project root:
 
 ```bash
-chmod +x update.sh
-./update.sh
+bash update.sh
 ```
 
-Alternatively, run `bash update.sh` without setting the executable bit. A bare `update.sh` is not normally found because the current directory is not part of the shell's command search path.
+A bare `update.sh` is not normally found because the current directory is not part of the shell's command search path. Avoid `chmod +x update.sh` unless the executable bit is committed in Git; otherwise it can make the working tree appear modified.
 
 The script checks that the working tree is clean, enables maintenance mode, and pulls the latest code from `origin main` using a fast-forward-only update. It prompts whether to install Composer dependencies, run database migrations, and update ownership and permissions. It then clears the application caches and disables maintenance mode. If a step fails after maintenance mode is enabled, the script attempts to bring the application back online; if that recovery fails, run `php artisan up` manually.
 
 If you choose to install dependencies, it uses `--no-dev --no-scripts --optimize-autoloader` and runs `php artisan package:discover` afterward. This supports servers where Composer's scripts are restricted by `proc_open`.
 
-If you choose to update permissions, enter the web-server user (or `user:group`). The script changes ownership of the project and sets `storage` and `bootstrap/cache` to mode `775`. The account and permissions vary by host; changing ownership may require running the update with sufficient privileges and can affect which account can run future Git updates. For example, a typical web-server account is `www-data`:
-
-```bash
-www-data
-```
+If you choose to update permissions, enter the web-server user (or `user:group`) when prompted. The script changes ownership of the project and sets `storage` and `bootstrap/cache` to mode `775`. The account and permissions vary by host; changing ownership may require running the update with sufficient privileges and can affect which account can run future Git updates. For example, a typical web-server account is `www-data`.
 
 ### Option 2: Manual update
 
 Run these commands from the project root. Install Composer dependencies only if `composer.json` or `composer.lock` changed, and migrate only when the update includes database migrations.
 
+Enable maintenance mode:
+
 ```bash
 php artisan down --retry=60
+```
+
+Pull the latest code:
+
+```bash
 git pull --ff-only origin main
+```
 
-# Optional: install production dependencies if they changed
+Optional — install production dependencies if `composer.json` or `composer.lock` changed:
+
+```bash
 composer install --no-dev --no-scripts --optimize-autoloader
+```
+
+Discover packages after installing dependencies:
+
+```bash
 php artisan package:discover
+```
 
-# Optional: apply pending database migrations
+Optional — run pending database migrations:
+
+```bash
 php artisan migrate --force
+```
 
+Clear application caches:
+
+```bash
 php artisan optimize:clear
+```
+
+Disable maintenance mode:
+
+```bash
 php artisan up
 ```
 
@@ -151,7 +194,14 @@ If a command fails after maintenance mode is enabled, bring the application back
 
 ```bash
 chown -R www-data:www-data .
-chmod -R 775 storage bootstrap/cache
+```
+
+```bash
+find storage bootstrap/cache -type d -exec chmod 775 {} +
+```
+
+```bash
+find storage bootstrap/cache -type f -exec chmod 664 {} +
 ```
 
 ## Managing Dependencies (3 Methods)
@@ -162,12 +212,20 @@ If you add new packages via `composer require` locally and need to deploy them t
 This avoids `proc_open` errors while letting Composer handle downloading and autoloading on the server:
 ```bash
 composer install --no-dev --no-scripts --optimize-autoloader
+```
+
+Then run package discovery:
+
+```bash
 php artisan package:discover
 ```
 
 ### Method 2: Manual `vendor` Upload (From Local Dev / Laragon)
 If you prefer not running Composer on the production server:
-1. Install packages locally: `composer require <package-name>`
+1. Install packages locally:
+   ```bash
+   composer require <package-name>
+   ```
 2. Commit and push `composer.json` and `composer.lock` to Git.
 3. Zip your local `vendor` folder (`vendor.zip`).
 4. Upload `vendor.zip` via SFTP / MobaXterm to your project root on the server.
@@ -190,7 +248,10 @@ If you want standard `composer install` to run on the server without any extra f
    *(e.g., `/etc/php/8.2/cli/php.ini` or `/etc/php/8.3/cli/php.ini`)*
 2. Open that file and find the `disable_functions` line.
 3. Remove `proc_open` from the `disable_functions` list and save.
-4. Now standard `composer install --no-dev --optimize-autoloader` will execute without errors.
+4. Now standard production dependency installation should execute without the `proc_open` restriction:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   ```
 
 ## Email settings
 

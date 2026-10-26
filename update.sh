@@ -142,7 +142,8 @@ if (( apply_permissions )); then
     chown -R "$web_owner:$web_group" .
 
     log "Setting Laravel writable-directory permissions"
-    chmod -R 775 storage bootstrap/cache
+    find storage bootstrap/cache -type d -exec chmod 775 {} +
+    find storage bootstrap/cache -type f -exec chmod 664 {} +
 fi
 
 log "Disabling maintenance mode"
