@@ -105,48 +105,25 @@ Your application is now fully installed and secured.
 
 ## Updating the Application (Robust Method)
 
-To ensure a smooth update without errors for your users, follow these steps in your terminal:
+Run the included update script from an interactive terminal in your project directory:
 
-1. **Enable Maintenance Mode** (prevents errors while files are being replaced):
-    ```bash
-    php artisan down
-    ```
+```bash
+chmod +x update.sh
+./update.sh
+```
 
-2. **Pull the latest code changes**:
-    ```bash
-    git pull origin main
-    ```
+Run `chmod +x update.sh` once on the server to make the script executable. Then `./update.sh` runs it from the current project directory. Alternatively, `bash update.sh` runs it without the executable bit. A bare `update.sh` is not normally found because the current directory is not part of the shell's command search path.
 
-3. **Install/Update dependencies** (Only needed if packages changed in `composer.json`):
-    *Note: If you only changed application code or blade files, you can skip this step.*
+The script checks that the working tree is clean, enables maintenance mode, and pulls the latest code from `origin main` using a fast-forward-only update. It prompts whether to install Composer dependencies, run database migrations, and update ownership and permissions. It then clears the application caches and disables maintenance mode. If a step fails after maintenance mode is enabled, the script attempts to bring the application back online; if that recovery fails, run `php artisan up` manually.
 
-    If your server restricts `proc_open` (common on HestiaCP / cPanel), use `--no-scripts` to bypass process execution, then run discovery manually:
-    ```bash
-    composer install --no-dev --no-scripts --optimize-autoloader
-    php artisan package:discover
-    ```
+If you choose to install dependencies, it uses `--no-dev --no-scripts --optimize-autoloader` and runs `php artisan package:discover` afterward. This supports servers where Composer's scripts are restricted by `proc_open`.
 
-4. **Run database migrations**:
-    ```bash
-    php artisan migrate --force
-    ```
+If you choose to update permissions, enter the web-server user (or `user:group`). The script changes ownership of the project and sets `storage` and `bootstrap/cache` to mode `775`. The account and permissions vary by host; changing ownership may require running the update with sufficient privileges and can affect which account can run future Git updates. For example, a typical web-server account is `www-data`:
 
-5. **Clear and Rebuild Cache**:
-    ```bash
-    php artisan optimize:clear
-    ```
-
-6. **Reset File Permissions** (CRITICAL if you ran the above as `root`):
-    Replace `www-data` with your web server's user if different (e.g., `apache` or your username).
-    ```bash
-    chown -R www-data:www-data .
-    chmod -R 775 storage bootstrap/cache
-    ```
-
-7. **Disable Maintenance Mode**:
-    ```bash
-    php artisan up
-    ```
+```bash
+./update.sh
+# At the ownership prompt, enter: www-data
+```
 
 ## Managing Dependencies (3 Methods)
 
