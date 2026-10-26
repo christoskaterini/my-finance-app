@@ -105,14 +105,18 @@ Your application is now fully installed and secured.
 
 ## Updating the Application (Robust Method)
 
-Run the included update script from an interactive terminal in your project directory:
+Choose either the automated script or the manual commands below. Both methods assume you are connected to the server and in the project root.
+
+### Option 1: Update script
+
+Make the script executable once, then run it:
 
 ```bash
 chmod +x update.sh
 ./update.sh
 ```
 
-Run `chmod +x update.sh` once on the server to make the script executable. Then `./update.sh` runs it from the current project directory. Alternatively, `bash update.sh` runs it without the executable bit. A bare `update.sh` is not normally found because the current directory is not part of the shell's command search path.
+Alternatively, run `bash update.sh` without setting the executable bit. A bare `update.sh` is not normally found because the current directory is not part of the shell's command search path.
 
 The script checks that the working tree is clean, enables maintenance mode, and pulls the latest code from `origin main` using a fast-forward-only update. It prompts whether to install Composer dependencies, run database migrations, and update ownership and permissions. It then clears the application caches and disables maintenance mode. If a step fails after maintenance mode is enabled, the script attempts to bring the application back online; if that recovery fails, run `php artisan up` manually.
 
@@ -121,8 +125,33 @@ If you choose to install dependencies, it uses `--no-dev --no-scripts --optimize
 If you choose to update permissions, enter the web-server user (or `user:group`). The script changes ownership of the project and sets `storage` and `bootstrap/cache` to mode `775`. The account and permissions vary by host; changing ownership may require running the update with sufficient privileges and can affect which account can run future Git updates. For example, a typical web-server account is `www-data`:
 
 ```bash
-./update.sh
-# At the ownership prompt, enter: www-data
+www-data
+```
+
+### Option 2: Manual update
+
+Run these commands from the project root. Install Composer dependencies only if `composer.json` or `composer.lock` changed, and migrate only when the update includes database migrations.
+
+```bash
+php artisan down --retry=60
+git pull --ff-only origin main
+
+# Optional: install production dependencies if they changed
+composer install --no-dev --no-scripts --optimize-autoloader
+php artisan package:discover
+
+# Optional: apply pending database migrations
+php artisan migrate --force
+
+php artisan optimize:clear
+php artisan up
+```
+
+If a command fails after maintenance mode is enabled, bring the application back online with `php artisan up` after resolving the issue. If you ran commands as `root`, update ownership and writable-directory permissions as needed, replacing `www-data` with your web-server user or `user:group`:
+
+```bash
+chown -R www-data:www-data .
+chmod -R 775 storage bootstrap/cache
 ```
 
 ## Managing Dependencies (3 Methods)
